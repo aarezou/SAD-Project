@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .forms import RequestForm
+from .forms import LoginForm
 
 
 def index(request):
@@ -10,11 +10,12 @@ def index(request):
 def needful(request):
     return render(request, 'tahapp/needful.html')#HttpResponse("Hello, world. You're at the polls index.")
 
-def submitRequest(request):
-    if request.method == 'POST':
-        form = RequestForm(request.POST)
-        if form.is_valid():
-            answer = form.cleaned_data['type']
-    return HttpResponse("Hello, world. You're at the polls index. %s" % answer)
+
+def login(request):
+    return HttpResponse("Hello, world. You're at the polls index.")
+
+
+def register(request):
+    return HttpResponse("Hello, world. You're at the polls index.")
 
 # Create your views here.

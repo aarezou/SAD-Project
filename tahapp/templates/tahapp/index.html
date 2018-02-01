@@ -59,9 +59,9 @@
 		  <h2>امکانات</h2>
           {% block navigation %}
 		  <ul class="nav nav-tabs nav-pills nav-stacked">
-			<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
-			<li><a href="#money" role="tab" data-toggle="tab">وجوه پرداختی</a></li>
-			<li><a href="#request" role="tab" data-toggle="tab">درخواست</a></li>
+			<li class="active"><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
+			<li><a href="#login" role="tab" data-toggle="tab">ورود</a></li>
+			<li><a href="#register" role="tab" data-toggle="tab">ثبت نام</a></li>
 		  </ul><br>
           {% endblock %}
 		</div>
@@ -75,11 +75,77 @@
                 <div role="tabpanel" class="tab-pane active" id="info">
                     <div class="well">
                     <h4>اطلاعات</h4>
-                    <p>اسم</p>
+                    <p>ما در این سامانه کارای خوب میکنیم</p>
                   </div>
                 </div>
-                <div role="tabpanel" class="tab-pane" id="money">gfsdf</div>
-                <div role="tabpanel" class="tab-pane" id="request">rgerg</div>
+                <div role="tabpanel" class="tab-pane" id="login">
+                      <form id="login-form" class="form-horizontal" action="{% url 'login' %}" method="POST">
+                          {% csrf_token %}
+                          <div class="form-group">
+                            <label class="control-label col-sm-2" for="email">نام کاربری</label>
+                            <div class="col-sm-10">
+                              <input type="text" class="form-control" id="username" name="username" placeholder="نام کاربری">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label col-sm-2" for="pwd">کلمه‌ی عبور</label>
+                            <div class="col-sm-10">
+                              <input type="password" class="form-control" id="pwd" placeholder="کلمه‌ی عبور">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                              <div class="checkbox">
+                                <label><input type="checkbox" id="rememberme"> مرا به خاطر بسپار</label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                              <button type="submit" class="btn btn-default">ورود</button>
+                            </div>
+                          </div>
+                    </form>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="register">
+                    <form id="register-form" class="form-horizontal" action="{% url 'register' %}" method="POST">
+                          {% csrf_token %}
+                            <div class="form-group">
+                            <label class="control-label col-sm-2" for="email">پست الکترونیک</label>
+                            <div class="col-sm-10">
+                              <input type="email" class="form-control" id="email" name="email" placeholder="email">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label col-sm-2" for="username">نام کاربری</label>
+                            <div class="col-sm-10">
+                              <input type="text" class="form-control" id="username" name="username" placeholder="نام کاربری">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label col-sm-2" for="pwd">کلمه‌ی عبور</label>
+                            <div class="col-sm-10">
+                              <input type="password" class="form-control" id="pwd" placeholder="کلمه‌ی عبور">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="control-label col-sm-2" for="pwd">تکرار کلمه‌ی عبور</label>
+                            <div class="col-sm-10">
+                              <input type="password" class="form-control" id="pwd" placeholder="تکرار کلمه‌ی عبور">
+                            </div>
+                          </div>
+                           <div class="form-group">
+                                <label class="col-sm-offset-3 radio-inline"><input type="radio" name="optradio" id="needful">نیازمند</label>
+                                <label class="col-sm-offset-3 radio-inline"><input type="radio" name="optradio" id="helper">مددکار</label>
+                                <label class="col-sm-offset-3 radio-inline"><input type="radio" name="optradio" id="donor">همیار</label>
+                           </div>
+                          <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                              <button type="submit" class="btn btn-default">ثبت نام</button>
+                            </div>
+                          </div>
+                    </form>
+                </div>
               </div>
           {% endblock %}
 		</div>
