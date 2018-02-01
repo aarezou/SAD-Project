@@ -66,18 +66,22 @@
           {% endblock %}
 		</div>
 		<br>
-		<div class="col-sm-9 bg-dark">
+		<div class="col-sm-8">
 		  <div class="well">
-			<h4>Dashboard</h4>
-			<p>Some text..</p>
+			<h3>به سامانه‌ی فلان خوش آمدید</h3>
 		  </div>
-           {% block content %}
-		  <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="info">adfasdf</div>
-            <div role="tabpanel" class="tab-pane" id="money">gfsdf</div>
-            <div role="tabpanel" class="tab-pane" id="request">rgerg</div>
-          </div>
-           {% endblock %}
+          {% block content %}
+              <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="info">
+                    <div class="well">
+                    <h4>اطلاعات</h4>
+                    <p>اسم</p>
+                  </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="money">gfsdf</div>
+                <div role="tabpanel" class="tab-pane" id="request">rgerg</div>
+              </div>
+          {% endblock %}
 		</div>
 
 	  </div>

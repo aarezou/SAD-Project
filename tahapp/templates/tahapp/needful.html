@@ -1,0 +1,50 @@
+{% extends "./index.html" %}
+
+{% block navigation %}
+    <ul class="nav nav-tabs nav-pills nav-stacked">
+        <li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+        <li><a href="#money" role="tab" data-toggle="tab">وجوه پرداختی</a></li>
+        <li><a href="#request" role="tab" data-toggle="tab">درخواست</a></li>
+    </ul><br>
+{% endblock %}
+ {% block content %}
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="info">
+            <div class="well">
+                <h4>اطلاعات</h4>
+                <p>اسم</p>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="money">
+            <div class="well">
+                <h4>موفقیت </h4>
+                <p>سیبشسیبش</p>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="request">
+            <div class="col-sm-5">
+                <h1>درخواست</h1>
+                <br>
+{#                <form action="{% url 'submitReq' %}" method="post">#}
+                    {% csrf_token %}
+                    <div class="input">
+                      <label for="type">نوع درخواست</label>
+                      <select class="form-control" id="type">
+                        <option value="letter" id="letter">نامه‌ی تشکر</option>
+                        <option value="changeHelper" id="changeHelper">تغییر مددکار</option>
+                        <option value="need" id="need">رفع نیاز</option>
+                      </select>
+                    </div>
+                    <br>
+                    <div role="tabpanel" class="tab-pane" id = "letter">
+                         <label for="description">توضیحات</label>
+                         <textarea class="form-control" rows="5" id="description"></textarea>
+                        <br>
+                        <input type="submit" value="ارسال" />
+                    </div>
+
+{#                </form>#}
+            </div>
+        </div>
+      </div>
+ {% endblock %}
