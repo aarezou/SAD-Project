@@ -58,10 +58,10 @@
       <div class="col-sm-3 sidenav hidden-xs">
 		  <h2>امکانات</h2>
           {% block navigation %}
-		  <ul class="nav nav-pills nav-stacked">
-			<li class="active"><a href="#section1">مشخصات</a></li>
-			<li><a href="#section2">وجوه پرداختی</a></li>
-			<li><a href="#section3">درخواست</a></li>
+		  <ul class="nav nav-tabs nav-pills nav-stacked">
+			<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+			<li><a href="#money" role="tab" data-toggle="tab">وجوه پرداختی</a></li>
+			<li><a href="#request" role="tab" data-toggle="tab">درخواست</a></li>
 		  </ul><br>
           {% endblock %}
 		</div>
@@ -72,13 +72,12 @@
 			<p>Some text..</p>
 		  </div>
            {% block content %}
-		  <div class="well">
-			<h4>Original Context </h4>
-			<p>asdfghjkl;sdfghjk sdfghjkldfghjk </p>
-		  </div>
+		  <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="info">adfasdf</div>
+            <div role="tabpanel" class="tab-pane" id="money">gfsdf</div>
+            <div role="tabpanel" class="tab-pane" id="request">rgerg</div>
+          </div>
            {% endblock %}
-		  
-		
 		</div>
 
 	  </div>

@@ -3,6 +3,6 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return render(request, 'tahapp/t1.html')#HttpResponse("Hello, world. You're at the polls index.")
+    return render(request, 'tahapp/index.html')#HttpResponse("Hello, world. You're at the polls index.")
 
 # Create your views here.
