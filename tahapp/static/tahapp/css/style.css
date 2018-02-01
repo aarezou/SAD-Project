@@ -1,0 +1,6 @@
+@import url(fontiran.css);
+@import url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/bootstrap-rtl/3.4.0/css/bootstrap-flipped.css);
+body{
+    font-family: IRAN ;
+}
