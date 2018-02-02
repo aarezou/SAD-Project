@@ -1,5 +1,6 @@
 from django import forms
 
+ROLE_CHOICES = ('Helper', 'Donor', 'Needful')
 
 class LoginForm(forms.Form):
     username = forms.CharField(label='label username', max_length='100')
@@ -8,7 +9,7 @@ class LoginForm(forms.Form):
 
 
 class RegisterForm(forms.Form):
-    email = forms.EmailField()
-    username = forms.CharField()
-    password = forms.CharField()
-    type = forms.RadioSelect()
+    #email = forms.EmailField(max_length='100')
+    username = forms.CharField(max_length='100')
+    #password = forms.CharField(max_length='100')
+    role = forms.ChoiceField(widget=forms.RadioSelect, required=True, choices=ROLE_CHOICES)

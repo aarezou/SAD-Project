@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .forms import LoginForm
+from .forms import LoginForm, RegisterForm
 
 
 def index(request):
-	return render(request, 'tahapp/index.html')
+	print("in index view")
+	return render(request, 'tahapp/tmp.html')
 
 
 def needful(request):
@@ -16,11 +17,20 @@ def login(request):
 		form = LoginForm(request.POST)
 		if form.is_valid():
 			return HttpResponse('login post success ' + str(form.cleaned_data['username']))
-		return render(request, 'tahapp/index.html')
+		return render(request, 'tahapp/index.html', {'login_failed': True})
 	return HttpResponse('login but wtf')
 
 
 def register(request):
-	return HttpResponse("Hello, world. You're at the polls index.")
+	print("in register view")
+	if request.method == 'POST':
+		form = RegisterForm(request.POST)
+		if form.is_valid():
+			s = str(form.cleaned_data['username'])
+			#s = str(form.cleaned_data['role'])
+			return HttpResponse('register post success ' + s)
+		return HttpResponse('register post fail')
+		#return render(request, 'tahapp/index.html', {'register_failed': True})
+	return HttpResponse('register but wtf')
 
 # Create your views here.
