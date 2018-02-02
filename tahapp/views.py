@@ -75,3 +75,11 @@ def submitHelperChange(request):
 def submitNeedCare(request):
 	return HttpResponse("Hello, world. You're at the polls index.")
 
+
+def helper(request):
+	return render(request, 'tahapp/helper.html')
+
+
+def logout(request):
+	return HttpResponse("Hello, world. You're at the polls index.")
+
