@@ -59,9 +59,19 @@
 		  <h2>امکانات</h2>
           {% block navigation %}
 		  <ul class="nav nav-tabs nav-pills nav-stacked">
-			<li class="active"><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
+          {% if login_failed %}
+			<li><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
+			<li class="active"><a href="#login" role="tab" data-toggle="tab">ورود</a></li>
+			<li><a href="#register" role="tab" data-toggle="tab">ثبت نام</a></li>
+          {% elif register_failed %}
+             <li><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
+			<li><a href="#login" role="tab" data-toggle="tab">ورود</a></li>
+			<li class="active"><a href="#register" role="tab" data-toggle="tab">ثبت نام</a></li>
+          {% else %}
+            <li class="active"><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
 			<li><a href="#login" role="tab" data-toggle="tab">ورود</a></li>
 			<li><a href="#register" role="tab" data-toggle="tab">ثبت نام</a></li>
+          {% endif %}
 		  </ul><br>
           {% endblock %}
 		</div>
@@ -72,13 +82,21 @@
 		  </div>
           {% block content %}
               <div class="tab-content">
+              {% if not login_failed and not register_failed %}
                 <div role="tabpanel" class="tab-pane active" id="info">
+              {% else %}
+                <div role="tabpanel" class="tab-pane" id="info">
+              {% endif %}
                     <div class="well">
                     <h4>اطلاعات</h4>
                     <p>ما در این سامانه کارای خوب میکنیم</p>
                   </div>
                 </div>
-                <div role="tabpanel" class="tab-pane" id="login">
+              {% if login_failed %}
+                <div role="tabpanel" class="tab-pane active" id="login">
+              {% else %}
+                    <div role="tabpanel" class="tab-pane" id="login">
+              {% endif %}
                       <form id="login-form" class="form-horizontal" action="{% url 'login' %}" method="POST">
                           {% csrf_token %}
                           <div class="form-group">
@@ -106,8 +124,17 @@
                             </div>
                           </div>
                     </form>
+              {% if login_failed %}
+                    <div class="alert alert-danger">
+                      <strong>خطا!</strong> نام کاربری یا کلمه عبور اشتباه است.
+                    </div>
+              {% endif %}
                 </div>
-                <div role="tabpanel" class="tab-pane" id="register">
+              {% if register_failed %}
+                <div role="tabpanel" class="tab-pane active" id="register">
+              {% else %}
+                    <div role="tabpanel" class="tab-pane" id="register">
+              {% endif %}
                     <form id="register-form" class="form-horizontal" action="{% url 'register' %}" method="POST">
                           {% csrf_token %}
                             <div class="form-group">
@@ -125,19 +152,19 @@
                           <div class="form-group">
                             <label class="control-label col-sm-2" for="pwd">کلمه‌ی عبور</label>
                             <div class="col-sm-10">
-                              <input type="password" class="form-control" id="pwd" placeholder="کلمه‌ی عبور">
+                              <input type="password" class="form-control" name="pwd" id="pwd" placeholder="کلمه‌ی عبور">
                             </div>
                           </div>
                           <div class="form-group">
                             <label class="control-label col-sm-2" for="pwd">تکرار کلمه‌ی عبور</label>
                             <div class="col-sm-10">
-                              <input type="password" class="form-control" id="pwd" placeholder="تکرار کلمه‌ی عبور">
+                              <input type="password" class="form-control" name="repeatpwd" id="pwd" placeholder="تکرار کلمه‌ی عبور">
                             </div>
                           </div>
                            <div class="form-group">
-                                <label class="col-sm-offset-3 radio-inline"><input type="radio" name="optradio" id="needful">نیازمند</label>
-                                <label class="col-sm-offset-3 radio-inline"><input type="radio" name="optradio" id="helper">مددکار</label>
-                                <label class="col-sm-offset-3 radio-inline"><input type="radio" name="optradio" id="donor">همیار</label>
+                                <label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" id="needful">نیازمند</label>
+                                <label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" id="helper">مددکار</label>
+                                <label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" id="donor">همیار</label>
                            </div>
                           <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
@@ -145,6 +172,11 @@
                             </div>
                           </div>
                     </form>
+              {% if register_failed %}
+                    <div class="alert alert-danger">
+                      <strong>خطا!</strong> نام کاربری یا کلمه عبور اشتباه است.
+                    </div>
+              {% endif %}
                 </div>
               </div>
           {% endblock %}

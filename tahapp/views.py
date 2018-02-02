@@ -16,7 +16,7 @@ def login(request):
 		form = LoginForm(request.POST)
 		if form.is_valid():
 			return HttpResponse('login post success ' + str(form.cleaned_data['username']))
-		return HttpResponse('login post fail')
+		return render(request, 'tahapp/index.html')
 	return HttpResponse('login but wtf')
 
 
