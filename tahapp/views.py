@@ -42,7 +42,7 @@ def register(request):
 			else:
 				User.objects.create_user(username=username, email=email, password=password)
 				context['success'] = True
-		else
+		else:
 			context['form_not_valid'] = True
 	return render(request, 'tahapp/index.html', context)
 
