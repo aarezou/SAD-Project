@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .forms import LoginForm, RegisterForm
-
+from django.contrib.auth.models import User
 
 def index(request):
 	print("in index view")
@@ -23,13 +23,27 @@ def login(request):
 
 def register(request):
 	print("in register view")
+	context = {'register_active': True}
 	if request.method == 'POST':
 		role = request.POST.get('role')
+		password_repeat = request.POST.get('password_repeat')
 		form = RegisterForm(request.POST)
-		if role and form.is_valid():
-			s = str(form.cleaned_data['username'])
-			return HttpResponse('register post success ' + s + ' ' + role)
-		return render(request, 'tahapp/index.html', {'register_failed': True})
-	return HttpResponse('register but wtf')
+		if not role:
+			context['no_role'] = True
+		elif form.is_valid():
+			username = form.cleaned_data['username']
+			password = form.cleaned_data['password']
+			email = form.cleaned_data['email']
+
+			if User.objects.filter(username=username).exists():
+				context['username_taken'] = True
+			elif password != password_repeat:
+				context['unequal_passwords'] = True
+			else:
+				User.objects.create_user(username=username, email=email, password=password)
+				context['success'] = True
+		else
+			context['form_not_valid'] = True
+	return render(request, 'tahapp/index.html', context)
 
 # Create your views here.
