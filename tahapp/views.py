@@ -1,14 +1,17 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .forms import LoginForm, RegisterForm
+from django.shortcuts import redirect
 from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
 from .models import Profile, Donor, Needful, Helper
 
 
 def index(request):
 	if request.user.is_authenticated:
-		return needful(request)
+		return redirect('needful')
 	return render(request, 'tahapp/index.html')
 
 
@@ -18,7 +21,8 @@ def needful(request):
 
 def login(request):
 	if request.user.is_authenticated:
-		return index(request)
+		print('what uuuuup')
+		return redirect('index')
 	if request.method == 'POST':
 		form = LoginForm(request.POST)
 		if form.is_valid():
@@ -26,14 +30,15 @@ def login(request):
 			password = form.cleaned_data['password']
 			user = authenticate(username=username, password=password)
 			if user:
-				return index(request)
+				auth_login(request, user)
+				return redirect('index')
 		return render(request, 'tahapp/index.html', {'login_failed': True})
-	return index(request)
+	return redirect('index')
 
 
 def register(request):
 	if request.user.is_authenticated:
-		return index(request)
+		return redirect('index')
 	context = {'register_active': True}
 	if request.method == 'POST':
 		role = request.POST.get('role')
@@ -81,5 +86,6 @@ def helper(request):
 
 
 def logout(request):
-	return HttpResponse("Hello, world. You're at the polls index.")
+	auth_logout(request)
+	return redirect('index')
 
