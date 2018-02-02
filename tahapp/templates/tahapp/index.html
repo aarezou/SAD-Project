@@ -62,7 +62,7 @@
 						<li><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
 						<li class="active"><a href="#login" role="tab" data-toggle="tab">ورود</a></li>
 						<li><a href="#register" role="tab" data-toggle="tab">ثبت نام</a></li>
-					{% elif register_failed %}
+					{% elif register_active	 %}
 						<li><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
 						<li><a href="#login" role="tab" data-toggle="tab">ورود</a></li>
 						<li class="active"><a href="#register" role="tab" data-toggle="tab">ثبت نام</a></li>
@@ -134,60 +134,66 @@
 				{% else %}
 					<div role="tabpanel" class="tab-pane" id="register">
 				{% endif %}
-			<form id="register-form" class="form-horizontal" action="{% url 'register' %}" method="POST">
-				{% csrf_token %}
-				<div class="form-group">
-					<label class="control-label col-sm-2" for="email">پست الکترونیک</label>
-					<div class="col-sm-10">
-						<input type="email" class="form-control" name="email" placeholder="email">
+				{%  if success %}
+					<div class="alert alert-success col-sm-5">
+						<strong>ثبت نام با موفقیت انجام شد.</strong>
 					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label col-sm-2" for="username">نام کاربری</label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" name="username" placeholder="نام کاربری">
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label col-sm-2" for="pwd">کلمه‌ی عبور</label>
-					<div class="col-sm-10">
-						<input type="password" class="form-control" name="password" placeholder="کلمه‌ی عبور">
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label col-sm-2" for="pwd">تکرار کلمه‌ی عبور</label>
-					<div class="col-sm-10">
-						<input type="password" class="form-control" name="password_repeat" placeholder="تکرار کلمه‌ی عبور">
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" value="Needful">نیازمند</label>
-					<label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" value="Helper">مددکار</label>
-					<label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" value="Donor">همیار</label>
-				</div>
-				<div class="form-group">
-					<div class="col-sm-offset-2 col-sm-10">
-						<button type="submit" class="btn btn-default">ثبت نام</button>
-					</div>
-				</div>
-			</form>
-			{% if no_role or username_taken or unequal_passwords %}
-				<div class="alert alert-danger">
-					<strong>خطا!</strong>
-					{% if no_role %}
-						نقش انتخاب نشده است.
-						<br>
+				{% else %}
+					<form id="register-form" class="form-horizontal" action="{% url 'register' %}" method="POST">
+						{% csrf_token %}
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="email">پست الکترونیک</label>
+							<div class="col-sm-10">
+								<input type="email" class="form-control" name="email" placeholder="email">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="username">نام کاربری</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="username" placeholder="نام کاربری">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="pwd">کلمه‌ی عبور</label>
+							<div class="col-sm-10">
+								<input type="password" class="form-control" name="password" placeholder="کلمه‌ی عبور">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="pwd">تکرار کلمه‌ی عبور</label>
+							<div class="col-sm-10">
+								<input type="password" class="form-control" name="password_repeat" placeholder="تکرار کلمه‌ی عبور">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" value="Needful">نیازمند</label>
+							<label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" value="Helper">مددکار</label>
+							<label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" value="Donor">همیار</label>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-10">
+								<button type="submit" class="btn btn-default">ثبت نام</button>
+							</div>
+						</div>
+					</form>
+					{% if no_role or username_taken or unequal_passwords %}
+						<div class="alert alert-danger">
+							<strong>خطا!</strong>
+							{% if no_role %}
+								نقش انتخاب نشده است.
+								<br>
+							{% endif %}
+							{% if username_taken %}
+								نام کاربری انخاب شده تکراری است.
+								<br>
+							{% endif %}
+							{% if unequal_passwords%}
+								کلمه‌ی عبور با تکرار آن همخوانی ندارد
+								<br>
+							{% endif %}
+						</div>
 					{% endif %}
-					{% if username_taken %}
-						نام کاربری انخاب شده تکراری است.
-						<br>
-					{% endif %}
-					{% if unequal_passwords%}
-						کلمه‌ی عبور با تکرار آن همخوانی ندارد
-						<br>
-					{% endif %}
-				</div>
-			{% endif %}
+				{% endif %}
 			</div>
 			</div>
 			{% endblock %}
