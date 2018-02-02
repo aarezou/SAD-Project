@@ -1,6 +1,5 @@
 from django import forms
 
-ROLE_CHOICES = ('Helper', 'Donor', 'Needful')
 
 class LoginForm(forms.Form):
     username = forms.CharField(label='label username', max_length='100')
