@@ -46,4 +46,16 @@ def register(request):
 			context['form_not_valid'] = True
 	return render(request, 'tahapp/index.html', context)
 
+
+def submitLetter(request):
+	return HttpResponse("Hello, world. You're at the polls index.")
+
+
+def submitHelperChange(request):
+	return HttpResponse("Hello, world. You're at the polls index.")
+
+
+def submitNeedCare(request):
+	return HttpResponse("Hello, world. You're at the polls index.")
+
 # Create your views here.
