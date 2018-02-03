@@ -6,22 +6,32 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
-from .models import Profile, Donor, Needful, Helper, Need, Payment, TnxLetter
+from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment, TnxLetter, ChangeHelper
 
 
 def index(request):
 	if request.user.is_authenticated:
-		return redirect('needful')
+		return redirect('needfulv')
 	return render(request, 'tahapp/index.html')
 
 
-def needful(request):
-	if not request.user.is_authenticated:
+def needfulv(request):
+	needful = get_needful(request)
+	if not needful:
 		return redirect(index)
-	payments = Payment.objects.filter(need__needful__profile__user=request.user)
-	for payment in payments:
-		print("yo: " + str(payment.date) + " : " + str(payment.need.value))
-	return render(request, 'tahapp/needful.html', {'payments': payments})
+	context = {}
+	context['payments'] = Payment.objects.filter(need__needful=needful)
+	context['needs'] = Need.objects.filter(needful=needful)
+	return render(request, 'tahapp/needful.html', context)
+
+
+def needfulv2(request, context):
+	needful = get_needful(request)
+	if not needful:
+		return redirect(index)
+	context['payments'] = Payment.objects.filter(need__needful=needful)
+	context['needs'] = Need.objects.filter(needful=needful)
+	return render(request, 'tahapp/needful.html', context)
 
 
 def login(request):
@@ -91,15 +101,30 @@ def submitLetter(request):
 			print("field provavly empty")
 			context['submit_letter_failed'] = True
 	print(context['submit_letter_active'])
-	return render(request, 'tahapp/needful.html', context)
+	return needfulv2(request, context)
 
 
 def submitHelperChange(request):
-	return HttpResponse("Hello, world. You're at the polls index.")
+	needful = get_needful(request)
+	if not needful:
+		return redirect('index')
+	context = {"helper_change_active": True}
+	if request.method == 'POST':
+		txt = request.POST.get('description')
+		if txt and txt != '':
+			ChangeHelper.objects.create(needful=needful, desc=txt)
+			context["helper_change_success"] = True
+		else:
+			context["helper_change_failed"] = True
+	return needfulv2(request, context)
 
 
 def submitNeedCare(request):
-	return HttpResponse("Hello, world. You're at the polls index.")
+	needful = get_needful(request)
+	if not needful:
+		return redirect('index')
+	context = {"need_care_active": True}
+	return render(request, 'tahapp/needful.html', context)
 
 
 def helper(request):

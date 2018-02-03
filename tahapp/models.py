@@ -46,3 +46,8 @@ class TnxLetter(models.Model):
 	context = models.CharField(max_length=100)
 	is_to_donor = models.BooleanField(default=False)
 	is_forwarded = models.BooleanField(default=False)
+
+
+class ChangeHelper(models.Model):
+	needful = models.ForeignKey(Needful, on_delete=models.CASCADE, blank=True, null=True)
+	desc = models.CharField(max_length=100)
