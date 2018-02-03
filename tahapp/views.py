@@ -11,32 +11,25 @@ from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment, TnxLet
 
 def index(request):
 	if request.user.is_authenticated:
-		return redirect('needfulv')
+		return redirect('needful_view')
 	return render(request, 'tahapp/index.html')
 
 
-def needfulv(request):
-	needful = get_needful(request)
-	if not needful:
-		return redirect(index)
-	context = {}
-	context['payments'] = Payment.objects.filter(need__needful=needful)
-	context['needs'] = Need.objects.filter(needful=needful)
-	return render(request, 'tahapp/needful.html', context)
-
-
-def needfulv2(request, context):
+def needful_view2(request, context):
 	needful = get_needful(request)
 	if not needful:
 		return redirect(index)
 	context['payments'] = Payment.objects.filter(need__needful=needful)
-	context['needs'] = Need.objects.filter(needful=needful)
+	context['needs'] = Need.objects.filter(needful=needful, is_urgent=False)
 	return render(request, 'tahapp/needful.html', context)
+
+
+def needful_view(request):
+	return needful_view2(request, {})
 
 
 def login(request):
 	if request.user.is_authenticated:
-		print('what uuuuup')
 		return redirect('index')
 	if request.method == 'POST':
 		form = LoginForm(request.POST)
@@ -94,14 +87,11 @@ def submitLetter(request):
 		receiver = request.POST.get('receiver')
 		txt = request.POST.get('txt')
 		if txt and receiver and txt != '':
-			print("was succesful")
 			TnxLetter.objects.create(needful=needful, donor=needful.donor, helper=needful.helper, context=txt, is_to_donor=(receiver=="Donor"))
 			context['submit_letter_success'] = True
 		else:
-			print("field provavly empty")
 			context['submit_letter_failed'] = True
-	print(context['submit_letter_active'])
-	return needfulv2(request, context)
+	return needful_view2(request, context)
 
 
 def submitHelperChange(request):
@@ -116,7 +106,7 @@ def submitHelperChange(request):
 			context["helper_change_success"] = True
 		else:
 			context["helper_change_failed"] = True
-	return needfulv2(request, context)
+	return needful_view2(request, context)
 
 
 def submitNeedCare(request):
@@ -124,7 +114,15 @@ def submitNeedCare(request):
 	if not needful:
 		return redirect('index')
 	context = {"need_care_active": True}
-	return render(request, 'tahapp/needful.html', context)
+	if request.method == 'POST':
+		need_id = request.POST.get('need')
+		needs = Need.objects.filter(id=need_id, needful=needful)
+		if needs.exists():
+			need = needs[0]
+			need.is_urgent = True
+			need.save()
+			context['need_care_success'] = True
+	return needful_view2(request, context)
 
 
 def helper(request):
