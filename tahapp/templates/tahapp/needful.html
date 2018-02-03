@@ -16,7 +16,11 @@
 {% endblock %}
 {% block content %}
 	<div class="tab-content">
+		{% if not submit_letter_active and not helper_change_active and not need_care_active %}
 		<div role="tabpanel" class="tab-pane active" id="info">
+		{% else %}
+		<div role="tabpanel" class="tab-pane" id="info">
+		{% endif %}
 			<div class="well">
 				<h4>اطلاعات</h4>
 				<p>اسم</p>
@@ -54,7 +58,11 @@
 				</div>
 			{% endif %}
 		</div>
+		{% if submit_letter_active %}
+		<div role="tabpanel" class="tab-pane avtive" id="letter">
+		{% else %}
 		<div role="tabpanel" class="tab-pane" id="letter">
+		{% endif %}
 			<div class="col-sm-5">
 				<h1>نامه‌ی تشکر</h1>
 				<br>
@@ -79,9 +87,24 @@
 						</div>
 					</div>
 				</form>
+				{% if submit_letter_success %}
+				<div class="alert alert-success">
+					<strong>نامه‌ی شما با موفقیت ثبت شد.</strong>
+				</div>
+				{% endif %}
+				{% if submit_letter_failed %}
+				<div class="alert alert-danger">
+					<strong>خطا!</strong> متن نامه خالی است.
+				</div>
+				{% endif %}
 			</div>
+
 		</div>
+		{% if helper_change_active %}
+		<div role="tabpanel" class="tab-pane active" id="helperChange">
+		{% else %}
 		<div role="tabpanel" class="tab-pane" id="helperChange">
+		{% endif %}
 			<div class="col-sm-5">
 				<h1>تغییر مددکار</h1>
 				<br>
@@ -99,33 +122,55 @@
 					</div>
 				</form>
 			</div>
+			{% if helper_change_success %}
+			<div class="alert alert-success">
+				<strong>تقاضای تغییر مددکار شما با موفقیت ثبت شد.</strong>
+			</div>
+			{% endif %}
+			{% if helper_change_failed %}
+			<div class="alert alert-danger">
+				<strong>خطا!</strong> متن توضیحات خالی است.
+			</div>
+			{% endif %}
 		</div>
+		{% if need_care_active %}
+		<div role="tabpanel" class="tab-pane active" id="needCare">
+		{% else %}
 		<div role="tabpanel" class="tab-pane" id="needCare">
+		{% endif %}
 			<div class="col-sm-5">
 				<h1>رفع نیاز</h1>
 				<br>
-				<div class="table-responsive">
-					<table class="table table-hover">
-						<tbody>
-						{% if needs %}
-							{% for need in needs %}
-								<tr>
-									<td>{{ need.desc }}</td>
-									<td>
-										<div class="form-group">
-											<a href={{ need.submit_url }}> <button type="button" class="btn btn-sm btn-block btn-default">درخواست رفع نیاز</button></a>
-										</div>
-									</td>
-								</tr>
-							{% endfor %}
-						{% else %}
-							<div class="alert alert-warning">
-								<strong>نیازی برای شما تعریف نشده است.</strong>
-							</div>
-						{% endif %}
-						</tbody>
-					</table>
-				</div>
+				{% if needs %}
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<tbody>
+								{% for need in needs %}
+									<tr>
+										<td>{{ need.desc }}</td>
+										<td>
+											<form action="{% url 'needCare' %}" method="post">
+												<div class="form-group">
+													<input type="hidden" name="need" value={{ need.id }}>
+													<button type="submit" class="btn btn-sm btn-default">درخواست رفع نیاز</button></a>
+												</div>
+											</form>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					{% if need_care_success %}
+						<div class="alert alert-success">
+							<strong>درخواست رفع نیاز شما با موفقیت ثبت شد.</strong>
+						</div>
+					{% endif %}
+				{% else %}
+					<div class="alert alert-warning">
+						<strong>نیازی برای شما تعریف نشده است.</strong>
+					</div>
+				{% endif %}
 			</div>
 		</div>
 	</div>
