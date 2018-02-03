@@ -59,7 +59,7 @@
 											<form action="{% url 'needfulCare' %}" method="post">
 												{% csrf_token %}
 												<div class="form-group">
-													<input type="hidden" name="need" value={{ needful.id }}>
+													<input type="hidden" name="needful" value={{ needful.id }}>
 													<button type="submit" class="btn btn-sm btn-default">تحت حمایت قراردادن</button></a>
 												</div>
 											</form>
