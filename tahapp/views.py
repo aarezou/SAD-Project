@@ -16,6 +16,8 @@ def index(request):
 
 
 def needful(request):
+	if not request.user.is_authenticated:
+		return redirect(index)
 	return render(request, 'tahapp/needful.html')
 
 
