@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
-from .models import Profile, Donor, Needful, Helper
+from .models import Profile, Donor, Needful, Helper, Need, Payment, TnxLetter
 
 
 def index(request):
@@ -18,7 +18,10 @@ def index(request):
 def needful(request):
 	if not request.user.is_authenticated:
 		return redirect(index)
-	return render(request, 'tahapp/needful.html')
+	payments = Payment.objects.filter(need__needful__profile__user=request.user)
+	for payment in payments:
+		print("yo: " + str(payment.date) + " : " + str(payment.need.value))
+	return render(request, 'tahapp/needful.html', {'payments': payments})
 
 
 def login(request):
@@ -71,8 +74,24 @@ def register(request):
 			context['form_not_valid'] = True
 	return render(request, 'tahapp/index.html', context)
 
+
 def submitLetter(request):
-	return HttpResponse("Hello, world. You're at the polls index.")
+	needful = get_needful(request)
+	if not needful:
+		return redirect('index')
+	context = {'submit_letter_active': True}
+	if request.method == 'POST':
+		receiver = request.POST.get('receiver')
+		txt = request.POST.get('txt')
+		if txt and receiver and txt != '':
+			print("was succesful")
+			TnxLetter.objects.create(needful=needful, donor=needful.donor, helper=needful.helper, context=txt, is_to_donor=(receiver=="Donor"))
+			context['submit_letter_success'] = True
+		else:
+			print("field provavly empty")
+			context['submit_letter_failed'] = True
+	print(context['submit_letter_active'])
+	return render(request, 'tahapp/needful.html', context)
 
 
 def submitHelperChange(request):
@@ -91,3 +110,13 @@ def logout(request):
 	auth_logout(request)
 	return redirect('index')
 
+
+def get_needful(request):
+	if not request.user.is_authenticated:
+		return None
+	try:
+		profile = Profile.objects.filter(user=request.user)[0]
+		needful = Needful.objects.filter(profile=profile)[0]
+		return needful
+	except Exception:
+		return None
