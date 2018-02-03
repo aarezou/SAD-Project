@@ -3,13 +3,42 @@
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
 		<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
-		<li><a href="#money" role="tab" data-toggle="tab">وجوه پرداختی</a></li>
-		<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> درخواست <span class="caret"></span></a>
-		<ul class="dropdown-menu">
-			<li><a href="#letter" role="tab" data-toggle="tab">نامه‌ی تشکر</a></li>
-			<li><a href="#helperChange" role="tab" data-toggle="tab">تغییر مددکار</a></li>
-			<li><a href="#needCare" role="tab" data-toggle="tab">رفع نیاز</a></li>
-		</ul>
-		</li>
+		<li><a href="#yourNeedfuls" role="tab" data-toggle="tab"> نیازمندان تحت حمایت شما</a></li>
+		<li><a href="#otherNeedfuls" role="tab" data-toggle="tab">نیازمندان بدون حامی</a></li>
+		<li><a class="text-danger" href={{ '../logout' }}>خروج از حساب کاربری</a></li>
 	</ul><br>
+{% endblock %}
+
+{% block content %}
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="info">
+			<div class="well">
+				<h4>اطلاعات</h4>
+				<p>اسم</p>
+			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane" id="yourNeedfuls">
+		<br>
+			<h1> نیازمندان تحت حمایت شما</h1><br>
+			{% block needful_content %}
+				{% if yourNeedfuls %}
+					<ul class="nav nav-tabs nav-pills nav-stacked col-sm-3" style="height: 400px; overflow: scroll; overflow-x: hidden">
+						{% for needful in yourNeedfuls %}
+						<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ needful.name }} <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li> <a href="../needfulInfo/{{needful.id}}/">نیاز‌ها</a></li>
+								<li>نامه‌های تشکر</li>
+								<li>نامه‌های در انتظار ارسال به همیار</li>
+							</ul>
+						</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<div class="col-sm-5 alert alert-warning">
+						<strong>شما نیازمندی تحت حمایت خود ندارید.</strong>
+					</div>
+				{% endif %}
+			{% endblock %}
+		</div>
+	</div>
 {% endblock %}
