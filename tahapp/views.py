@@ -129,6 +129,11 @@ def helper(request):
 	return render(request, 'tahapp/helper.html')
 
 
+def needfulinfo(request):
+	return render(request, 'tahapp/needfulinfo.html')
+
+
+
 def logout(request):
 	auth_logout(request)
 	return redirect('index')
