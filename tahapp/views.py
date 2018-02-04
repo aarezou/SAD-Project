@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
-from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment, TnxLetter, ChangeHelper
+from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment, TnxLetter, ChangeHelper, Achievement
 
 
 def index(request):
@@ -163,9 +163,53 @@ def neefulCare(request):
 	return helper_view2(request, context)
 
 
-def needfulinfo(request, needful_id):
-	return render(request, 'tahapp/needfulinfo.html')
+def needfulinfo2(request, needful_id, context):
+	helper = get_helper(request)
+	if not helper:
+		return redirect('index')
+	needfuls = Needful.objects.filter(id=needful_id, helper=helper)
+	if not needfuls.exists():
+		return redirect('index')
+	needful = needfuls[0]
+	context['needful'] = needful
+	context['achievements'] = Achievement.objects.filter(needful=needful)
+	context['letters_to_helper'] = TnxLetter.objects.filter(needful=needful, helper=helper, is_to_donor=False)
+	context['letters_to_forward'] = TnxLetter.objects.filter(needful=needful, is_to_donor=True, is_forwarded=False)
+	return render(request, 'tahapp/needfulinfo.html', context)
 
+
+def needfulinfo(request, needful_id):
+	return needfulinfo2(request, needful_id, {})
+
+
+def forward_letter(request):
+	helper = get_helper(request)
+	if helper and request.method == 'POST':
+		letter_id = request.POST.get('forward_letter')
+		if letter_id:
+			letters = TnxLetter.objects.filter(id=letter_id, needful__helper=helper)
+			if letters.exist():
+				letter = letters[0]
+				letter.is_forwarded = True
+				letter.save()
+				return needfulinfo2(request, letter.needful.id, {'forward_letter_success': True})
+	return redirect('index')
+
+def submit_achievement(request, needful_id):
+	helper = get_helper(request)
+	if helper and request.method == 'POST':
+		needfuls = Needful.objects.filter(id=needful_id, helper=helper)
+		if needfuls.exists():
+			desc = request.POST.get('achievement_submit')
+			context = {}
+			if desc and desc != '':
+				needful = needfuls[0]
+				Achievement.objects.create(needful=needful, desc=desc)
+				context['submit_achievement_success'] = True
+			else:
+				context['submit_achievement_failed'] = True
+			return needfulinfo2(request, needful_id, context)
+	return redirect('index')
 
 def logout(request):
 	auth_logout(request)
