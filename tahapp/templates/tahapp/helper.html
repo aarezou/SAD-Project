@@ -2,9 +2,21 @@
 
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
+		{% if not your_needfuls_active and not other_needfuls_active %}
 		<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+		{% else %}
+		<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+		{% endif %}
+		{% if your_needfuls_active %}
+		<li class="active"><a href="#yourNeedfuls" role="tab" data-toggle="tab"> نیازمندان تحت حمایت شما</a></li>
+		{% else %}
 		<li><a href="#yourNeedfuls" role="tab" data-toggle="tab"> نیازمندان تحت حمایت شما</a></li>
+		{% endif %}
+		{% if other_needfuls_active %}
+		<li class="active"><a href="#otherNeedfuls" role="tab" data-toggle="tab">نیازمندان بدون حامی</a></li>
+		{% else %}
 		<li><a href="#otherNeedfuls" role="tab" data-toggle="tab">نیازمندان بدون حامی</a></li>
+		{% endif %}
 		<li><a class="text-danger" href={{ '../logout' }}>خروج از حساب کاربری</a></li>
 	</ul><br>
 {% endblock %}
@@ -60,7 +72,7 @@
 												{% csrf_token %}
 												<div class="form-group">
 													<input type="hidden" name="needful" value={{ needful.id }}>
-													<button type="submit" class="btn btn-sm btn-default">تحت حمایت قراردادن</button></a>
+													<button type="submit" class="btn btn-sm btn-default">تحت حمایت قراردادن</button>
 												</div>
 											</form>
 										</td>

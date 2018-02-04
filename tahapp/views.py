@@ -188,7 +188,7 @@ def forward_letter(request):
 		letter_id = request.POST.get('forward_letter')
 		if letter_id:
 			letters = TnxLetter.objects.filter(id=letter_id, needful__helper=helper)
-			if letters.exist():
+			if letters.exists():
 				letter = letters[0]
 				letter.is_forwarded = True
 				letter.save()
@@ -199,7 +199,7 @@ def forward_letter(request):
 def submit_achievement(request):
 	helper = get_helper(request)
 	if helper and request.method == 'POST':
-		needful_id = request.POST.filter('id')
+		needful_id = request.POST.get('id')
 		if needful_id:
 			needfuls = Needful.objects.filter(id=needful_id, helper=helper)
 			if needfuls.exists():
