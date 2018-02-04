@@ -196,20 +196,22 @@ def forward_letter(request):
 	return redirect('index')
 
 
-def submit_achievement(request, needful_id):
+def submit_achievement(request):
 	helper = get_helper(request)
 	if helper and request.method == 'POST':
-		needfuls = Needful.objects.filter(id=needful_id, helper=helper)
-		if needfuls.exists():
-			desc = request.POST.get('achievement_submit')
-			context = {}
-			if desc and desc != '':
-				needful = needfuls[0]
-				Achievement.objects.create(needful=needful, desc=desc)
-				context['submit_achievement_success'] = True
-			else:
-				context['submit_achievement_failed'] = True
-			return needfulinfo2(request, needful_id, context)
+		needful_id = request.POST.filter('id')
+		if needful_id:
+			needfuls = Needful.objects.filter(id=needful_id, helper=helper)
+			if needfuls.exists():
+				desc = request.POST.get('achievement_submit')
+				context = {}
+				if desc and desc != '':
+					needful = needfuls[0]
+					Achievement.objects.create(needful=needful, desc=desc)
+					context['submit_achievement_success'] = True
+				else:
+					context['submit_achievement_failed'] = True
+				return needfulinfo2(request, needful_id, context)
 	return redirect('index')
 
 
