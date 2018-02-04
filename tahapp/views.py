@@ -219,7 +219,7 @@ def submit_achievement(request):
 def submit_need_helper(request):
 	helper = get_helper(request)
 	if helper and request.method == 'POST':
-		needful_id = request.POST.filter('id')
+		needful_id = request.POST.get('id')
 		needfuls = Needful.objects.filter(id=needful_id, helper=helper)
 		if needfuls.exists():
 			needful = needfuls[0]
