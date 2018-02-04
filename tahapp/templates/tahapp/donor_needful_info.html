@@ -18,39 +18,39 @@
 			<h3> نیازها </h3><br>
 				<ul class="list-group" id="needs">
 					{% if needs %}
-					{% for need in needs %}
-						<li class="list-group-item">
-							<div class="col-sm-7">{{ need.desc }}</div>
-							<div class="col-sm-3">{{ need.value }}</div>
-							<div class="col-sm-1">
-								{% if need.is_urgent %} <span class="glyphicon glyphicon-alert"></span>
-								{% endif %}
-							</div>
-							<div class="col-sm-1">
-								{% if need.done %} <span class="glyphicon glyphicon-ok"></span>
-								{% else %}
-								<div class="form-group">
-									<form  action="{% url 'pay_need_donor' %}" method="post">
-										{% csrf_token %}
-										<input type="hidden" name="id" value={{ need.id }}>
-										<div class="col-sm-2"><button type="submit" class="btn btn-sm btn-default">پرداخت نیاز</button></div>
-									</form>
+						{% for need in needs %}
+							<li class="list-group-item">
+								<div class="col-sm-7">{{ need.desc }}</div>
+								<div class="col-sm-2">{{ need.value }}</div>
+								<div class="col-sm-1">
+									{% if need.is_urgent %} <span class="glyphicon glyphicon-alert"></span>
+									{% endif %}
 								</div>
-								{% endif %}
+								<div class="col-sm-2">
+									{% if need.done %} <span class="glyphicon glyphicon-ok"></span>
+									{% else %}
+									<div class="form-group">
+										<form  action="{% url 'pay_need_donor' %}" method="post">
+											{% csrf_token %}
+											<input type="hidden" name="id" value={{ need.id }}>
+											<button type="submit" class="btn btn-sm btn-default">پرداخت نیاز</button>
+										</form>
+									</div>
+									{% endif %}
+								</div>
+							<br>
+							</li>
+						{% endfor %}
+						{% if pay_failed %}
+							<div class="alert alert-danger">
+								<strong>خطا!</strong> موجودی شما برای پرداخت این نیاز کافی نیست.
 							</div>
-						<br>
-						</li>
-					{% if pay_failed %}
-						<div class="alert alert-danger">
-							<strong>خطا!</strong> موجودی شما برای پرداخت این نیاز کافی نیست.
-						</div>
-					{% endif %}
-					{% if pay_success %}
-						<div class="alert alert-success">
-							<strong>پزداخت نیاز با موفقیت انجام شد.</strong>
-						</div>
-					{% endif %}
-					{% endfor %}
+						{% endif %}
+						{% if pay_success %}
+							<div class="alert alert-success">
+								<strong>پزداخت نیاز با موفقیت انجام شد.</strong>
+							</div>
+						{% endif %}
 					{% else %}
 						<div class="alert alert-warning">
 							<strong>برای این نیازمند نیازی ثبت نشده است.</strong>
