@@ -146,7 +146,7 @@ def helper_view(request):
 	return helper_view2(request, {})
 
 
-def neefulCare(request):
+def helper_needful_care(request):
 	helper = get_helper(request)
 	if not helper:
 		return redirect('index')
@@ -248,6 +248,62 @@ def donor_view(request):
 	return donor_view2(request, {})
 
 
+def donor_needful_info2(request, needful_id, context):
+	donor = get_donor(request)
+	if not donor:
+		return redirect('index')
+	needfuls = Needful.objects.filter(id=needful_id, donor=donor)
+	if not needfuls.exists():
+		return redirect('index')
+	needful = needfuls[0]
+	context['needful'] = needful
+	context['achievements'] = Achievement.objects.filter(needful=needful)
+	context['letters_to_donor'] = TnxLetter.objects.filter(needful=needful, is_to_donor=True, is_forwarded=True)
+	context['needs'] = Need.objects.filter(needful=needful)
+	return render(request, 'tahapp/donor_needful_info.html', context)
+
+
+def donor_needful_info(request, needful_id):
+	return donor_needful_info2(request, needful_id, {})
+
+
+def donor_needful_care(request):
+	donor = get_donor(request)
+	if not donor:
+		return redirect('index')
+	context = {"other_needfuls_active": True}
+	if request.method == 'POST':
+		needful_id = request.POST.get('needful')
+		needfuls = Needful.objects.filter(id=needful_id)
+		if needfuls.exists():
+			needful = needfuls[0]
+			if (not needful.donor) and needful.helper:
+				needful.donor = donor
+				needful.save()
+				context['needful_care_success'] = True
+	return donor_view2(request, context)
+
+
+def pay_need_donor(request):
+	donor = get_donor(request)
+	if not donor:
+		return redirect('index')
+	if request.method == 'POST':
+		need_id = request.POST.get('need')
+		needs = Need.objects.filter(id=need_id, needful__donor=donor)
+		if needs.exists():
+			need = needs[0]
+			if need.value <= donor.credit:
+				donor.credit -= need.value
+				donor.save()
+				need.done = True
+				need.save()
+				return donor_needful_info2(request, {'pay_success': True})
+			else:
+				return donor_needful_info2(request, {'pay_failed': True})
+	return redirect('index')
+
+
 def logout(request):
 	auth_logout(request)
 	return redirect('index')
@@ -273,7 +329,6 @@ def get_helper(request):
 		return helper
 	except Exception:
 		return None
-
 
 
 def get_donor(request):
