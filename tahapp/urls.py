@@ -17,4 +17,5 @@ urlpatterns = [
 	path('needfulCare/', views.neefulCare, name='needfulCare'),
 	path('submit_achievement/', views.submit_achievement, name='submit_achievement'),
 	path('forward_letter/', views.forward_letter, name='forward_letter'),
+	path('submit_need_helper/', views.submit_need_helper, name='submit_need_helper'),
 ]

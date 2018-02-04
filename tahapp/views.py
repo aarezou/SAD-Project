@@ -175,6 +175,7 @@ def needfulinfo2(request, needful_id, context):
 	context['achievements'] = Achievement.objects.filter(needful=needful)
 	context['letters_to_helper'] = TnxLetter.objects.filter(needful=needful, helper=helper, is_to_donor=False)
 	context['letters_to_forward'] = TnxLetter.objects.filter(needful=needful, is_to_donor=True, is_forwarded=False)
+	context['needs'] = Need.objects.filter(needful=needful)
 	return render(request, 'tahapp/needfulinfo.html', context)
 
 
@@ -212,6 +213,23 @@ def submit_achievement(request):
 				else:
 					context['submit_achievement_failed'] = True
 				return needfulinfo2(request, needful_id, context)
+	return redirect('index')
+
+
+def submit_need_helper(request):
+	helper = get_helper(request)
+	if helper and request.method == 'POST':
+		needful_id = request.POST.filter('id')
+		needfuls = Needful.objects.filter(id=needful_id, helper=helper)
+		if needfuls.exists():
+			needful = needfuls[0]
+			desc = request.POST.get('desc')
+			value = request.POST.get('value')
+			temp = request.POST.get('is_urgent')
+			is_urgent = True if x else False
+			if value and desc and desc != '':
+				Need.objects.create(needful=needful, desc=desc, value=value, is_urgent=is_urgent)
+				return needfulinfo2(request, needful.id, {'submit_need_helper_success':True})
 	return redirect('index')
 
 
