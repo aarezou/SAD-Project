@@ -6,7 +6,7 @@ from . import views
 urlpatterns = [
 	path('', views.index, name='index'),
 	path('needful_view/', views.needful_view, name='needful_view'),
-	path('needfulinfo/<int:needful_id>/', views.needfulinfo, name='needfulinfo'),
+	path('helper_needful_info/<int:needful_id>/', views.helper_needful_info, name='helper_needful_info'),
 	path('helper_view/', views.helper_view, name='helper_view'),
 	path('login/', views.login, name='login'),
 	path('logout', views.logout, name='needCare'),
@@ -18,4 +18,5 @@ urlpatterns = [
 	path('submit_achievement/', views.submit_achievement, name='submit_achievement'),
 	path('forward_letter/', views.forward_letter, name='forward_letter'),
 	path('submit_need_helper/', views.submit_need_helper, name='submit_need_helper'),
+	path('donor_view/', views.donor_view, name='donor_view'),
 ]

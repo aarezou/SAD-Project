@@ -18,6 +18,8 @@ def index(request):
 				return redirect('needful_view')
 			elif profile.role == 'H':
 				return redirect('helper_view')
+			elif profile.role == 'D':
+				return redirect('donor_view')
 	return render(request, 'tahapp/index.html')
 
 
@@ -136,9 +138,7 @@ def helper_view2(request, context):
 	if not helper:
 		return redirect('index')
 	context['yourNeedfuls'] = Needful.objects.filter(helper=helper)
-	print(Needful.objects.filter(helper=helper).count())
 	context['otherNeedfuls'] = Needful.objects.filter(helper=None)
-	print('did you reach there')
 	return render(request, 'tahapp/helper.html', context)
 
 
@@ -163,7 +163,7 @@ def neefulCare(request):
 	return helper_view2(request, context)
 
 
-def needfulinfo2(request, needful_id, context):
+def helper_needful_info2(request, needful_id, context):
 	helper = get_helper(request)
 	if not helper:
 		return redirect('index')
@@ -176,11 +176,11 @@ def needfulinfo2(request, needful_id, context):
 	context['letters_to_helper'] = TnxLetter.objects.filter(needful=needful, helper=helper, is_to_donor=False)
 	context['letters_to_forward'] = TnxLetter.objects.filter(needful=needful, is_to_donor=True, is_forwarded=False)
 	context['needs'] = Need.objects.filter(needful=needful)
-	return render(request, 'tahapp/needfulinfo.html', context)
+	return render(request, 'tahapp/helper_needful_info.html', context)
 
 
-def needfulinfo(request, needful_id):
-	return needfulinfo2(request, needful_id, {})
+def helper_needful_info(request, needful_id):
+	return helper_needful_info2(request, needful_id, {})
 
 
 def forward_letter(request):
@@ -193,7 +193,7 @@ def forward_letter(request):
 				letter = letters[0]
 				letter.is_forwarded = True
 				letter.save()
-				return needfulinfo2(request, letter.needful.id, {'forward_letter_success': True})
+				return helper_needful_info2(request, letter.needful.id, {'forward_letter_success': True})
 	return redirect('index')
 
 
@@ -212,7 +212,7 @@ def submit_achievement(request):
 					context['submit_achievement_success'] = True
 				else:
 					context['submit_achievement_failed'] = True
-				return needfulinfo2(request, needful_id, context)
+				return helper_needful_info2(request, needful_id, context)
 	return redirect('index')
 
 
@@ -227,14 +227,25 @@ def submit_need_helper(request):
 			value = request.POST.get('need_val')
 			temp = request.POST.get('is_urgent')
 			is_urgent = True if temp else False
-			print('here')
 			if value and desc and desc != '':
-				print('not here')
 				Need.objects.create(needful=needful, desc=desc, value=value, is_urgent=is_urgent)
-				return needfulinfo2(request, needful.id, {'submit_need_helper_success': True})
+				return helper_needful_info2(request, needful.id, {'submit_need_helper_success': True})
 			else:
-				return needfulinfo2(request, needful.id, {'submit_need_helper_failed': True})
+				return helper_needful_info2(request, needful.id, {'submit_need_helper_failed': True})
 	return redirect('index')
+
+
+def donor_view2(request, context):
+	donor = get_donor(request)
+	if not donor:
+		return redirect('index')
+	context['yourNeedfuls'] = Needful.objects.filter(donor=donor)
+	context['otherNeedfuls'] = Needful.objects.filter(donor=None).exclude(helper=None)
+	return render(request, 'tahapp/donor.html', context)
+
+
+def donor_view(request):
+	return donor_view2(request, {})
 
 
 def logout(request):
@@ -260,5 +271,17 @@ def get_helper(request):
 		profile = Profile.objects.filter(user=request.user)[0]
 		helper = Helper.objects.filter(profile=profile)[0]
 		return helper
+	except Exception:
+		return None
+
+
+
+def get_donor(request):
+	if not request.user.is_authenticated:
+		return None
+	try:
+		profile = Profile.objects.filter(user=request.user)[0]
+		donor = Donor.objects.filter(profile=profile)[0]
+		return donor
 	except Exception:
 		return None
