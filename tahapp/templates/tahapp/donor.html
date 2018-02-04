@@ -7,6 +7,7 @@
 		{% else %}
 		<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
 		{% endif %}
+		<li><a href="#money" role="tab" data-toggle="tab">وجوه پرداختی</a></li>
 		{% if your_needfuls_active %}
 		<li class="active"><a href="#yourNeedfuls" role="tab" data-toggle="tab"> نیازمندان تحت حمایت شما</a></li>
 		{% else %}
@@ -32,6 +33,40 @@
 				<h4>اطلاعات</h4>
 				<p>اسم</p>
 			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane" id="money">
+			<br>
+			<h1>گزارش وجوه پرداختی </h1><br>
+			{% if payments %}
+				<div class="table-responsive" style="height: 400px; overflow: scroll; overflow-x: hidden">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>مقدار</th>
+								<th>توضیحات</th>
+								<th>نام نیازمند</th>
+								<th>تاریخ</th>
+								<th>زمان</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for payment in payments %}
+							<tr>
+								<td >{{ payment.need.value }}</td>
+								<td >{{ payment.need.desc }}</td>
+								<td >{{ payment.need.needful.profile.user.username }}</td>
+								<td >{{ payment.date|date }}</td>
+								<td >{{ payment.date|time }}</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% else %}
+				<div class="col-sm-5 alert alert-warning">
+					<strong>شما پرداختی انجام نداده‌اید.</strong>
+				</div>
+			{% endif %}
 		</div>
 		{% if your_needfuls_active %}
 		<div role="tabpanel" class="tab-pane active" id="yourNeedfuls">
