@@ -15,4 +15,6 @@ urlpatterns = [
 	path('helperChange/', views.submitHelperChange, name='helperChange'),
 	path('needCare/', views.submitNeedCare, name='needCare'),
 	path('needfulCare/', views.neefulCare, name='needfulCare'),
+	path('submit_achievement/<int:needful_id>/', views.submit_achievement, name='submit_achievement'),
+	path('forward_letter/', views.forward_letter, name='forward_letter'),
 ]

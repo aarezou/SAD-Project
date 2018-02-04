@@ -195,6 +195,7 @@ def forward_letter(request):
 				return needfulinfo2(request, letter.needful.id, {'forward_letter_success': True})
 	return redirect('index')
 
+
 def submit_achievement(request, needful_id):
 	helper = get_helper(request)
 	if helper and request.method == 'POST':
@@ -210,6 +211,7 @@ def submit_achievement(request, needful_id):
 				context['submit_achievement_failed'] = True
 			return needfulinfo2(request, needful_id, context)
 	return redirect('index')
+
 
 def logout(request):
 	auth_logout(request)
