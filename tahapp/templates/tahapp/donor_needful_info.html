@@ -1,0 +1,88 @@
+{% extends "./index.html" %}
+
+{% block navigation %}
+	<ul class="nav nav-tabs nav-pills nav-stacked">
+		<li><a href={{ '../../helper_view/#info'}}>مشخصات</a></li>
+		<li class="active"><a href={{ '../../helper_view/#yourNeedfuls'}} > نیازمندان تحت حمایت شما <span class="glyphicon glyphicon-chevron-left"></span> {{ needful.profile.user.username }} </a></li>
+		<li><a href={{ '../../helper_view/#otherNeedfuls'}}>نیازمندان بدون حامی</a></li>
+		<li><a class="text-danger" href={{ '../../logout' }}>خروج از حساب کاربری</a></li>
+	</ul><br>
+{% endblock %}
+
+{% block content %}
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="yourNeedfuls">
+		<br>
+			<h1> نیازمندان تحت حمایت شما <span class="glyphicon glyphicon-chevron-left"></span> {{ needful.profile.user.username }} </h1>
+			<div class="col-sm-12s">
+			<h3> نیازها </h3><br>
+			<div class="form-group">
+				<form  action="{% url 'submit_need_helper' %}" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="id" value={{ needful.id }}>
+					<ul class="list-group" id="needs">
+						{% if needs %}
+						{% for need in needs %}
+							<li class="list-group-item">
+								<div class="col-sm-7">{{ need.desc }}</div>
+								<div class="col-sm-3">{{ need.value }}</div>
+								<div class="col-sm-1">
+									{% if need.is_urgent %} <span class="glyphicon glyphicon-alert"></span>
+									{% endif %}
+								</div>
+								<div class="col-sm-1">
+									{% if need.done %} <span class="glyphicon glyphicon-ok"></span>
+									{% endif %}
+								</div>
+                            <br>
+							</li>
+
+						{% endfor %}
+						{% else %}
+							<div class="alert alert-warning">
+								<strong>برای این نیازمند نیازی ثبت نشده است.</strong>
+							</div>
+						{% endif %}
+						<br>
+						<li class="list-group_item">
+							<div class="col-sm-5"><label for="desc">شرح</label><input type="text" class="form-control" id="desc" name="need_desc"></div>
+							<div class="col-sm-3"><label for="val">مقدار</label><input type="text" class="form-control" id="val" name="need_val"></div>
+							<div class="col-sm-2 checkbox"><label><input type="checkbox" value="is_urgent" name="is_urgent">فوری</label></div>
+							<div class="col-sm-2"><button type="submit" class="btn btn-sm btn-default">ثبت نیاز</button></div>
+						</li>
+					</ul>
+				</form>
+			</div>
+			</div>
+			<div class="col-sm-7">
+			<h3> موفقیت‌ها </h3><br>
+				<ul class="list-group" id="success">
+					{% if achievements %}
+					{% for ach in achievements %}
+						<li class="list-group-item">{{ ach.desc }}</li>
+					{% endfor %}
+					{% else %}
+						<div class="alert alert-warning">
+							<strong>برای این نیازمند موفقیتی ثبت نشده است.</strong>
+						</div>
+					{% endif %}
+					<br>
+				</ul>
+			</div>
+			<div class="col-sm-7">
+			<h3> نامه‌های تشکر </h3><br>
+				{% if letters_to_helper %}
+				<ul class="list-group" id="thanks">
+					{% for letter in letters_to_helper %}
+					<li class="list-group-item"> {{ letter.context }}</li>
+					{% endfor %}
+				</ul>
+				{% else %}
+				<div class="alert alert-warning">
+					<strong>نامه‌ی تشکری از این نیازمند برای شما وجود ندارد.</strong>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
