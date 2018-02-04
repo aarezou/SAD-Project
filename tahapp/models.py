@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from .choices import ROLE_CHOICES
 
-# Create your models here.
-
 
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -50,4 +48,9 @@ class TnxLetter(models.Model):
 
 class ChangeHelper(models.Model):
 	needful = models.ForeignKey(Needful, on_delete=models.CASCADE, blank=True, null=True)
+	desc = models.CharField(max_length=100)
+
+
+class Achievement(models.Model):
+	needful = models.ForeignKey(Needful, on_delete=models.CASCADE)
 	desc = models.CharField(max_length=100)

@@ -11,7 +11,13 @@ from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment, TnxLet
 
 def index(request):
 	if request.user.is_authenticated:
-		return redirect('needful_view')
+		profiles = Profile.objects.filter(user=request.user)
+		if profiles.exists():
+			profile = profiles[0]
+			if profile.role == 'N':
+				return redirect('needful_view')
+			elif profile.role == 'H':
+				return redirect('helper_view')
 	return render(request, 'tahapp/index.html')
 
 
@@ -125,13 +131,40 @@ def submitNeedCare(request):
 	return needful_view2(request, context)
 
 
-def helper(request):
-	return render(request, 'tahapp/helper.html')
+def helper_view2(request, context):
+	helper = get_helper(request)
+	if not helper:
+		return redirect('index')
+	context['yourNeedfuls'] = Needful.objects.filter(helper=helper)
+	print(Needful.objects.filter(helper=helper).count())
+	context['otherNeedfuls'] = Needful.objects.filter(helper=None)
+	print('did you reach there')
+	return render(request, 'tahapp/helper.html', context)
 
 
-def needfulinfo(request):
+def helper_view(request):
+	return helper_view2(request, {})
+
+
+def neefulCare(request):
+	helper = get_helper(request)
+	if not helper:
+		return redirect('index')
+	context = {"other_needfuls_active": True}
+	if request.method == 'POST':
+		needful_id = request.POST.get('needful')
+		needfuls = Needful.objects.filter(id=needful_id)
+		if needfuls.exists():
+			needful = needfuls[0]
+			if not needful.helper:
+				needful.helper = helper
+				needful.save()
+				context['needful_care_success'] = True
+	return helper_view2(request, context)
+
+
+def needfulinfo(request, needful_id):
 	return render(request, 'tahapp/needfulinfo.html')
-
 
 
 def logout(request):
@@ -146,5 +179,16 @@ def get_needful(request):
 		profile = Profile.objects.filter(user=request.user)[0]
 		needful = Needful.objects.filter(profile=profile)[0]
 		return needful
+	except Exception:
+		return None
+
+
+def get_helper(request):
+	if not request.user.is_authenticated:
+		return None
+	try:
+		profile = Profile.objects.filter(user=request.user)[0]
+		helper = Helper.objects.filter(profile=profile)[0]
+		return helper
 	except Exception:
 		return None
