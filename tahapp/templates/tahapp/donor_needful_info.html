@@ -3,6 +3,8 @@
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
 		<li><a href={{ '../../helper_view/#info'}}>مشخصات</a></li>
+		<li><a href={{ '../../helper_view/#credit'}}>اعتبار</a></li>
+		<li><a href={{ '../../helper_view/#money'}}>وجوه پرداختی</a></li>
 		<li class="active"><a href={{ '../../helper_view/#yourNeedfuls'}} > نیازمندان تحت حمایت شما <span class="glyphicon glyphicon-chevron-left"></span> {{ needful.profile.user.username }} </a></li>
 		<li><a href={{ '../../helper_view/#otherNeedfuls'}}>نیازمندان بدون حامی</a></li>
 		<li><a class="text-danger" href={{ '../../logout' }}>خروج از حساب کاربری</a></li>
@@ -33,7 +35,7 @@
 										<form  action="{% url 'pay_need_donor' %}" method="post">
 											{% csrf_token %}
 											<input type="hidden" name="id" value={{ need.id }}>
-											<button type="submit" class="btn btn-xs btn-default">پرداخت نیاز</button>
+											<button type="submit" class="btn btn-xs btn-default">پرداخت</button>
 										</form>
 									</div>
 									{% endif %}
