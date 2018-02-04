@@ -317,7 +317,7 @@ def increase_credit(request):
 		return redirect('index')
 	if request.method == 'POST':
 		context = {'credit_active':True}
-		value = request.POST.get('value')
+		value = int(request.POST.get('value'))
 		if value and value > 0:
 			donor.credit += value
 			donor.save()
@@ -334,7 +334,7 @@ def donate(request):
 		return redirect('index')
 	if request.method == 'POST':
 		context = {'credit_active':True}
-		value = request.POST.get('value')
+		value = int(request.POST.get('value'))
 		if value and value > 0:
 			if donor.credit >= value:
 				foundation = Foundation.objects.get(id=1)

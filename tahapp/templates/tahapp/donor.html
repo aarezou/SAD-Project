@@ -2,7 +2,7 @@
 
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
-		{% if not your_needfuls_active and not other_needfuls_active and not credit_active%}
+		{% if not your_needfuls_active and not other_needfuls_active and not credit_active %}
 			<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
 		{% else %}
 			<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
@@ -29,7 +29,7 @@
 
 {% block content %}
 	<div class="tab-content">
-		{% if not your_needfuls_active and not other_needfuls_active %}
+		{% if not your_needfuls_active and not other_needfuls_active and not credit_active %}
 			<div role="tabpanel" class="tab-pane active" id="info">
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="info">
@@ -46,43 +46,43 @@
 		{% endif %}
 			<br>
 			<h1>اعتبار </h1><br>
-			<h3>{{ credit }} میزان اعتبار شما: </h3>
+			<h3> میزان اعتبار شما: {{ credit }}</h3> <br>
 			<form action="{% url 'increase_credit' %}" method="post">
 				{% csrf_token %}
-				<div class="form-group">
-					<label for="value"> مقدار</label><input id="value" name="value" >
+				<div class="col-sm-7 form-group">
+					<label for="value"> مقدار </label><input class="form-control" type="number" id="value" name="value" >
 					<button type="submit" class="btn btn-sm btn-default">افزایش اعتبار</button>
 				</div>
 			</form>
-			<br>
+
 			<form action="{% url 'donate' %}" method="post">
 				{% csrf_token %}
-				<div class="form-group">
-					<label for="value"> مقدار</label><input id="value" name="value" >
+				<div class="col-sm-7 form-group">
+					<label for="value"> مقدار </label><input class="form-control" type="number" id="value" name="value" >
 					<button type="submit" class="btn btn-sm btn-default">اهدا به سامانه</button>
 				</div>
 			</form>
 			<br>
 			{% if credit_success %}
-				<div class="col-sm-5 alert alert-success">
+				<div class="col-sm-7 alert alert-success">
 					<strong>افزایش اعتبار با موفقیت انجام شد.</strong>
 				</div>
 				<br>
 			{% endif %}
 			{% if credit_failed or donation_failed%}
-				<div class="col-sm-5 alert alert-danger">
+				<div class="col-sm-7 alert alert-danger">
 					<strong>خطا</strong>لطفا یک عدد مثبت وارد کنید.
 				</div>
 				<br>
 			{% endif %}
 			{% if donation_success %}
-				<div class="col-sm-5 alert alert-success">
+				<div class="col-sm-7 alert alert-success">
 					<strong>اهدا به سامانه با موفقیت انجام شد.</strong>
 				</div>
 				<br>
 			{% endif %}
 			{% if donation_not_enough %}
-				<div class="col-sm-5 alert alert-danger">
+				<div class="col-sm-7 alert alert-danger">
 					<strong>خطا</strong>اعتبار شما کافی نیست.
 				</div>
 				<br>
