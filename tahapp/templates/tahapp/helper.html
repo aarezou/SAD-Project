@@ -31,7 +31,7 @@
 			{% if yourNeedfuls %}
 				<ul class="nav nav-tabs nav-pills nav-stacked col-sm-3" style="height: 400px; overflow: scroll; overflow-x: hidden">
 					{% for needful in yourNeedfuls %}
-					<li><a href="../needfulinfo/{{needful.id}}/" >{{ needful.name }} </a></li>
+					<li><a href="../needfulinfo/{{needful.id}}/" >{{ needful.profile.user.username }} </a></li>
 					{% endfor %}
 				</ul>
 			{% else %}
