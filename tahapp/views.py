@@ -226,7 +226,7 @@ def submit_need_helper(request):
 			desc = request.POST.get('desc')
 			value = request.POST.get('value')
 			temp = request.POST.get('is_urgent')
-			is_urgent = True if x else False
+			is_urgent = True if temp else False
 			if value and desc and desc != '':
 				Need.objects.create(needful=needful, desc=desc, value=value, is_urgent=is_urgent)
 				return needfulinfo2(request, needful.id, {'submit_need_helper_success':True})
