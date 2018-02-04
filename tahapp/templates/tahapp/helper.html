@@ -68,7 +68,7 @@
 									<tr>
 										<td>{{ needful.profile.user.username }}</td>
 										<td>
-											<form action="{% url 'needfulCare' %}" method="post">
+											<form action="{% url 'helper_needful_care' %}" method="post">
 												{% csrf_token %}
 												<div class="form-group">
 													<input type="hidden" name="needful" value={{ needful.id }}>
