@@ -11,7 +11,7 @@
 
 {% block content %}
 	<div class="tab-content">
-		{% if not your_needful_active and not other_needful_active %}
+		{% if not your_needfuls_active and not other_needfuls_active %}
 			<div role="tabpanel" class="tab-pane active" id="info">
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="info">
@@ -21,7 +21,7 @@
 				<p>اسم</p>
 			</div>
 		</div>
-		{% if other_needfuls_active %}
+		{% if your_needfuls_active %}
 		<div role="tabpanel" class="tab-pane active" id="yourNeedfuls">
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="yourNeedfuls">
