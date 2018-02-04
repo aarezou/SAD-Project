@@ -289,18 +289,20 @@ def pay_need_donor(request):
 	if not donor:
 		return redirect('index')
 	if request.method == 'POST':
-		need_id = request.POST.get('need')
-		needs = Need.objects.filter(id=need_id, needful__donor=donor)
+		print("here 1")
+		need_id = request.POST.get('id')
+		needs = Need.objects.filter(id=need_id, needful__donor=donor).exclude(needful=None)
 		if needs.exists():
+			print("here 2")
 			need = needs[0]
 			if need.value <= donor.credit:
 				donor.credit -= need.value
 				donor.save()
 				need.done = True
 				need.save()
-				return donor_needful_info2(request, {'pay_success': True})
+				return donor_needful_info2(request, need.needful.id, {'pay_success': True})
 			else:
-				return donor_needful_info2(request, {'pay_failed': True})
+				return donor_needful_info2(request, need.needful.id, {'pay_failed': True})
 	return redirect('index')
 
 
