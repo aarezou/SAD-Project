@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from .choices import ROLE_CHOICES
 
 
+class Foundation(models.Model):
+	credit = models.IntegerField(default=0)
+
+
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	role = models.CharField(max_length=1, choices=ROLE_CHOICES)
@@ -34,6 +38,7 @@ class Need(models.Model):
 
 class Payment(models.Model):
 	need = models.ForeignKey(Need, on_delete=models.CASCADE)
+	donor = models.ForeignKey(Donor, on_delete=models.SET_NULL, null=True)
 	date = models.DateTimeField(auto_now_add=True)
 
 

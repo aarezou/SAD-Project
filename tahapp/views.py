@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
-from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment, TnxLetter, ChangeHelper, Achievement
+from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment, TnxLetter, ChangeHelper, Achievement, Foundation
 
 
 def index(request):
@@ -23,17 +23,9 @@ def index(request):
 	return render(request, 'tahapp/index.html')
 
 
-def needful_view2(request, context):
-	needful = get_needful(request)
-	if not needful:
-		return redirect(index)
-	context['payments'] = Payment.objects.filter(need__needful=needful)
-	context['needs'] = Need.objects.filter(needful=needful, is_urgent=False)
-	return render(request, 'tahapp/needful.html', context)
-
-
-def needful_view(request):
-	return needful_view2(request, {})
+def logout(request):
+	auth_logout(request)
+	return redirect('index')
 
 
 def login(request):
@@ -50,6 +42,19 @@ def login(request):
 				return redirect('index')
 		return render(request, 'tahapp/index.html', {'login_failed': True})
 	return redirect('index')
+
+
+def needful_view2(request, context):
+	needful = get_needful(request)
+	if not needful:
+		return redirect(index)
+	context['payments'] = Payment.objects.filter(need__needful=needful)
+	context['needs'] = Need.objects.filter(needful=needful, is_urgent=False)
+	return render(request, 'tahapp/needful.html', context)
+
+
+def needful_view(request):
+	return needful_view2(request, {})
 
 
 def register(request):
@@ -241,6 +246,8 @@ def donor_view2(request, context):
 		return redirect('index')
 	context['yourNeedfuls'] = Needful.objects.filter(donor=donor)
 	context['otherNeedfuls'] = Needful.objects.filter(donor=None).exclude(helper=None)
+	context['payments'] = Payment.objects.filter(donor=donor)
+	context['credit'] = donor.credit
 	return render(request, 'tahapp/donor.html', context)
 
 
@@ -289,11 +296,9 @@ def pay_need_donor(request):
 	if not donor:
 		return redirect('index')
 	if request.method == 'POST':
-		print("here 1")
 		need_id = request.POST.get('id')
 		needs = Need.objects.filter(id=need_id, needful__donor=donor).exclude(needful=None)
 		if needs.exists():
-			print("here 2")
 			need = needs[0]
 			if need.value <= donor.credit:
 				donor.credit -= need.value
@@ -306,9 +311,45 @@ def pay_need_donor(request):
 	return redirect('index')
 
 
-def logout(request):
-	auth_logout(request)
+def increase_credit(request):
+	donor = get_donor(request)
+	if not donor:
+		return redirect('index')
+	if request.method == 'POST':
+		context = {'credit_active':True}
+		value = request.POST.get('value')
+		if value and value > 0:
+			donor.credit += value
+			donor.save()
+			context['credit_success'] = True
+		else:
+			context['credit_failed'] = True
+		return donor_view2(request, context)
 	return redirect('index')
+
+
+def donate(request):
+	donor = get_donor(request)
+	if not donor:
+		return redirect('index')
+	if request.method == 'POST':
+		context = {'credit_active':True}
+		value = request.POST.get('value')
+		if value and value > 0:
+			if donor.credit >= value:
+				foundation = Foundation.objects.get(id=1)
+				foundation.credit += value
+				foundation.save()
+				donor.credit -= value
+				donor.save()
+				context['donation_success'] = True
+			else:
+				context['donation_not_enough'] = True
+		else:
+			context['donation_failed'] = True
+		return donor_view2(request, context)
+	return redirect('index')
+
 
 
 def get_needful(request):
