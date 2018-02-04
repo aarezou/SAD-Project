@@ -20,20 +20,20 @@
 					{% if needs %}
 						{% for need in needs %}
 							<li class="list-group-item">
-								<div class="col-sm-7">{{ need.desc }}</div>
+								<div class="col-sm-8">{{ need.desc }}</div>
 								<div class="col-sm-2">{{ need.value }}</div>
 								<div class="col-sm-1">
 									{% if need.is_urgent %} <span class="glyphicon glyphicon-alert"></span>
 									{% endif %}
 								</div>
-								<div class="col-sm-2">
+								<div class="col-sm-1">
 									{% if need.done %} <span class="glyphicon glyphicon-ok"></span>
 									{% else %}
 									<div class="form-group">
 										<form  action="{% url 'pay_need_donor' %}" method="post">
 											{% csrf_token %}
 											<input type="hidden" name="id" value={{ need.id }}>
-											<button type="submit" class="btn btn-sm btn-default">پرداخت نیاز</button>
+											<button type="submit" class="btn btn-xs btn-default">پرداخت نیاز</button>
 										</form>
 									</div>
 									{% endif %}
@@ -41,29 +41,23 @@
 							<br>
 							</li>
 						{% endfor %}
-						{% if pay_failed %}
-							<div class="alert alert-danger">
-								<strong>خطا!</strong> موجودی شما برای پرداخت این نیاز کافی نیست.
-							</div>
-						{% endif %}
-						{% if pay_success %}
-							<div class="alert alert-success">
-								<strong>پزداخت نیاز با موفقیت انجام شد.</strong>
-							</div>
-						{% endif %}
 					{% else %}
 						<div class="alert alert-warning">
 							<strong>برای این نیازمند نیازی ثبت نشده است.</strong>
 						</div>
 					{% endif %}
-					<br>
-					<li class="list-group_item">
-						<div class="col-sm-5"><label for="desc">شرح</label><input type="text" class="form-control" id="desc" name="need_desc"></div>
-						<div class="col-sm-3"><label for="val">مقدار</label><input type="text" class="form-control" id="val" name="need_val"></div>
-						<div class="col-sm-2 checkbox"><label><input type="checkbox" value="is_urgent" name="is_urgent">فوری</label></div>
-						<div class="col-sm-2"><button type="submit" class="btn btn-sm btn-default">ثبت نیاز</button></div>
-					</li>
 				</ul>
+                <br>
+                {% if pay_failed %}
+                    <div class="alert alert-danger">
+                        <strong>خطا!</strong> موجودی شما برای پرداخت این نیاز کافی نیست.
+                    </div>
+                {% endif %}
+                {% if pay_success %}
+                    <div class="alert alert-success">
+                        <strong>پزداخت نیاز با موفقیت انجام شد.</strong>
+                    </div>
+                {% endif %}
 			</div>
 			<div class="col-sm-7">
 			<h3> موفقیت‌ها </h3><br>
