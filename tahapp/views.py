@@ -223,13 +223,17 @@ def submit_need_helper(request):
 		needfuls = Needful.objects.filter(id=needful_id, helper=helper)
 		if needfuls.exists():
 			needful = needfuls[0]
-			desc = request.POST.get('desc')
-			value = request.POST.get('value')
+			desc = request.POST.get('need_desc')
+			value = request.POST.get('need_val')
 			temp = request.POST.get('is_urgent')
 			is_urgent = True if temp else False
+			print('here')
 			if value and desc and desc != '':
+				print('not here')
 				Need.objects.create(needful=needful, desc=desc, value=value, is_urgent=is_urgent)
-				return needfulinfo2(request, needful.id, {'submit_need_helper_success':True})
+				return needfulinfo2(request, needful.id, {'submit_need_helper_success': True})
+			else:
+				return needfulinfo2(request, needful.id, {'submit_need_helper_failed': True})
 	return redirect('index')
 
 

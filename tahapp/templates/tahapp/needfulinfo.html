@@ -14,27 +14,29 @@
 		<div role="tabpanel" class="tab-pane active" id="yourNeedfuls">
 		<br>
 			<h1> نیازمندان تحت حمایت شما <span class="glyphicon glyphicon-chevron-left"></span> {{ needful.profile.user.username }} </h1>
-			<div class="col-sm-7">
+			<div class="col-sm-12s">
 			<h3> نیازها </h3><br>
 			<div class="form-group">
 				<form  action="{% url 'submit_need_helper' %}" method="post">
 				{% csrf_token %}
 				<input type="hidden" name="id" value={{ needful.id }}>
-					<ul class="list-group" id="success">
+					<ul class="list-group" id="needs">
 						{% if needs %}
 						{% for need in needs %}
 							<li class="list-group-item">
-								<div class="col-sm-3">{{ need.desc }}</div>
+								<div class="col-sm-7">{{ need.desc }}</div>
 								<div class="col-sm-3">{{ need.value }}</div>
-								<div class="col-sm-3">
+								<div class="col-sm-1">
 									{% if need.is_urgent %} <span class="glyphicon glyphicon-alert"></span>
 									{% endif %}
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-1">
 									{% if need.done %} <span class="glyphicon glyphicon-ok"></span>
 									{% endif %}
 								</div>
+                            <br>
 							</li>
+
 						{% endfor %}
 						{% else %}
 							<div class="alert alert-warning">
