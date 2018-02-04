@@ -2,21 +2,26 @@
 
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
-		{% if not your_needfuls_active and not other_needfuls_active %}
-		<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+		{% if not your_needfuls_active and not other_needfuls_active and not credit_active%}
+			<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
 		{% else %}
-		<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+			<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+		{% endif %}
+		{% if credit_active %}
+			<li class="active"><a href="#credit" role="tab" data-toggle="tab">اعتبار</a></li>
+		{% else %}
+			<li><a href="#credit" role="tab" data-toggle="tab">اعتبار</a></li>
 		{% endif %}
 		<li><a href="#money" role="tab" data-toggle="tab">وجوه پرداختی</a></li>
 		{% if your_needfuls_active %}
-		<li class="active"><a href="#yourNeedfuls" role="tab" data-toggle="tab"> نیازمندان تحت حمایت شما</a></li>
+			<li class="active"><a href="#yourNeedfuls" role="tab" data-toggle="tab"> نیازمندان تحت حمایت شما</a></li>
 		{% else %}
-		<li><a href="#yourNeedfuls" role="tab" data-toggle="tab"> نیازمندان تحت حمایت شما</a></li>
+			<li><a href="#yourNeedfuls" role="tab" data-toggle="tab"> نیازمندان تحت حمایت شما</a></li>
 		{% endif %}
 		{% if other_needfuls_active %}
-		<li class="active"><a href="#otherNeedfuls" role="tab" data-toggle="tab">نیازمندان بدون حامی</a></li>
+			<li class="active"><a href="#otherNeedfuls" role="tab" data-toggle="tab">نیازمندان بدون حامی</a></li>
 		{% else %}
-		<li><a href="#otherNeedfuls" role="tab" data-toggle="tab">نیازمندان بدون حامی</a></li>
+			<li><a href="#otherNeedfuls" role="tab" data-toggle="tab">نیازمندان بدون حامی</a></li>
 		{% endif %}
 		<li><a class="text-danger" href={{ '../logout' }}>خروج از حساب کاربری</a></li>
 	</ul><br>
@@ -33,6 +38,55 @@
 				<h4>اطلاعات</h4>
 				<p>اسم</p>
 			</div>
+		</div>
+		{% if credit_active %}
+		<div role="tabpanel" class="tab-pane active" id="credit">
+		{% else %}
+		<div role="tabpanel" class="tab-pane" id="credit">
+		{% endif %}
+			<br>
+			<h1>اعتبار </h1><br>
+			<h3>{{ credit }} میزان اعتبار شما: </h3>
+			<form action="{% url 'increase_credit' %}" method="post">
+				{% csrf_token %}
+				<div class="form-group">
+					<label for="value"> مقدار</label><input id="value" name="value" >
+					<button type="submit" class="btn btn-sm btn-default">افزایش اعتبار</button>
+				</div>
+			</form>
+			<br>
+			<form action="{% url 'donate' %}" method="post">
+				{% csrf_token %}
+				<div class="form-group">
+					<label for="value"> مقدار</label><input id="value" name="value" >
+					<button type="submit" class="btn btn-sm btn-default">اهدا به سامانه</button>
+				</div>
+			</form>
+			<br>
+			{% if credit_success %}
+				<div class="col-sm-5 alert alert-success">
+					<strong>افزایش اعتبار با موفقیت انجام شد.</strong>
+				</div>
+				<br>
+			{% endif %}
+			{% if credit_failed or donation_failed%}
+				<div class="col-sm-5 alert alert-danger">
+					<strong>خطا</strong>لطفا یک عدد مثبت وارد کنید.
+				</div>
+				<br>
+			{% endif %}
+			{% if donation_success %}
+				<div class="col-sm-5 alert alert-success">
+					<strong>اهدا به سامانه با موفقیت انجام شد.</strong>
+				</div>
+				<br>
+			{% endif %}
+			{% if donation_not_enough %}
+				<div class="col-sm-5 alert alert-danger">
+					<strong>خطا</strong>اعتبار شما کافی نیست.
+				</div>
+				<br>
+			{% endif %}
 		</div>
 		<div role="tabpanel" class="tab-pane" id="money">
 			<br>
