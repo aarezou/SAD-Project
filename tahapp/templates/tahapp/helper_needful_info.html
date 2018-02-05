@@ -27,11 +27,19 @@
 							<li class="list-group-item">
 								<div class="col-sm-7">{{ need.desc }}</div>
 								<div class="col-sm-2">{{ need.value }}</div>
-								<div class="col-sm-1">
+								<div class="col-sm-2">
 									{% if need.is_urgent %} <span class="glyphicon glyphicon-alert"></span>
+									{% else %}
+										<div class="form-group">
+										<form  action="{% url 'make_urgent_helper' %}" method="post">
+											{% csrf_token %}
+											<input type="hidden" name="id" value={{ need.id }}>
+											<button type="submit" class="btn btn-xs btn-default">فوری کردن</button>
+										</form>
+									</div>
 									{% endif %}
 								</div>
-								<div class="col-sm-2">
+								<div class="col-sm-1">
 									{% if need.done %} <span class="glyphicon glyphicon-ok"></span>
 									{% endif %}
 								</div>
