@@ -5,7 +5,7 @@
 		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active %}
 			<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
 		{% else %}
-			<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+			<li><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
 		{% endif %}
 		<li><a href="#money" role="tab" data-toggle="tab">گزارش وجوه پرداختی</a></li>
 		{% if confirmed_needfuls_active %}
@@ -35,8 +35,7 @@
 		<div role="tabpanel" class="tab-pane" id="info">
 		{% endif %}
 			<div class="well">
-				<h4>اطلاعات</h4>
-				<p>اسم</p>
+				<h4>{{ credit }}</h4>
 			</div>
 		</div>
 		<div role="tabpanel" class="tab-pane" id="money">
