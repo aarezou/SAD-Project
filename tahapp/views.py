@@ -49,7 +49,7 @@ def needful_view2(request, context):
 	if not needful:
 		return redirect(index)
 	context['payments'] = Payment.objects.filter(need__needful=needful)
-	context['needs'] = Need.objects.filter(needful=needful, is_urgent=False)
+	context['needs'] = Need.objects.filter(needful=needful, is_urgent=False, done=False)
 	return render(request, 'tahapp/needful.html', context)
 
 
@@ -305,6 +305,7 @@ def pay_need_donor(request):
 				donor.save()
 				need.done = True
 				need.save()
+				Payment.objects.create(need=need, donor=donor)
 				return donor_needful_info2(request, need.needful.id, {'pay_success': True})
 			else:
 				return donor_needful_info2(request, need.needful.id, {'pay_failed': True})
@@ -351,7 +352,6 @@ def donate(request):
 	return redirect('index')
 
 
-
 def get_needful(request):
 	if not request.user.is_authenticated:
 		return None
@@ -368,8 +368,7 @@ def get_helper(request):
 		return None
 	try:
 		profile = Profile.objects.filter(user=request.user)[0]
-		helper = Helper.objects.filter(profile=profile)[0]
-		return helper
+		return Helper.objects.filter(profile=profile)[0]
 	except Exception:
 		return None
 
@@ -379,7 +378,6 @@ def get_donor(request):
 		return None
 	try:
 		profile = Profile.objects.filter(user=request.user)[0]
-		donor = Donor.objects.filter(profile=profile)[0]
-		return donor
+		return Donor.objects.filter(profile=profile)[0]
 	except Exception:
 		return None
