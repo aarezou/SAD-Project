@@ -2,34 +2,34 @@
 
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
-		{% if not your_needfuls_active and not other_needfuls_active %}
-		<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active %}
+			<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
 		{% else %}
-		<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+			<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
 		{% endif %}
 		<li><a href="#money" role="tab" data-toggle="tab">گزارش وجوه پرداختی</a></li>
-		{% if your_needfuls_active %}
-		<li class="active"><a href="#confirmed_needfuls" role="tab" data-toggle="tab"> نیازمندان تایید شده</a></li>
+		{% if confirmed_needfuls_active %}
+			<li class="active"><a href="#confirmed_needfuls" role="tab" data-toggle="tab"> نیازمندان تایید شده</a></li>
 		{% else %}
-		<li><a href="#confirmed_needfuls" role="tab" data-toggle="tab"> نیازمندان تایید شده</a></li>
+			<li><a href="#confirmed_needfuls" role="tab" data-toggle="tab"> نیازمندان تایید شده</a></li>
 		{% endif %}
 		{% if other_needfuls_active %}
-		<li class="active"><a href="#other_needfuls" role="tab" data-toggle="tab">نیازمندان تایید نشده</a></li>
+			<li class="active"><a href="#other_needfuls" role="tab" data-toggle="tab">نیازمندان تایید نشده</a></li>
 		{% else %}
-		<li><a href="#other_needfuls" role="tab" data-toggle="tab">نیازمندان تایید نشده</a></li>
+			<li><a href="#other_needfuls" role="tab" data-toggle="tab">نیازمندان تایید نشده</a></li>
 		{% endif %}
-{#		{% if helper_active %}#}
-{#		<li class="active"><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>#}
-{#		{% else %}#}
-		<li><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>
-{#		{% endif %}#}
+		{% if helpers_active %}
+			<li class="active"><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>
+		{% else %}
+			<li><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>
+		{% endif %}
 		<li><a class="text-danger" href={{ '../logout' }}>خروج از حساب کاربری</a></li>
 	</ul><br>
 {% endblock %}
 
 {% block content %}
 	<div class="tab-content">
-		{% if not your_needfuls_active and not other_needfuls_active %}
+		{% if not confirmed_needfuls_active and not other_needfuls_active %}
 			<div role="tabpanel" class="tab-pane active" id="info">
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="info">
@@ -85,12 +85,20 @@
 						{% for needful in confirmed_needfuls %}
 						<a href="../admin_needful_info/{{needful.id}}/" >
 							<li class="list-group-item">
-								<div class="col-sm-9">{{ needful.profile.user.username }} </div>
-								<div class="col-sm-3">
-									{% if needful.monthly_pay %}
-									<span class="glyphicon glyphicon-ok"></span>
+								<div class="col-sm-8">{{ needful.profile.user.username }} </div>
+								<div class="col-sm-4">
+									{% if needful.monthly_paid %}
+									<span class="col-sm-3 glyphicon glyphicon-ok"></span>
+									<div class="col-sm-9 form-group">
+										<form action="{% url 'deactive_monthly_pay' %}" method="post">
+											{% csrf_token %}
+											<input type="hidden" name="id" value={{ needful.id }}>
+											<button type="submit" class="btn btn-xs btn-default">غیر فعال کردن پرداخت ماهیانه</button>
+										</form>
+									</div>
 									{% else %}
-									<div class="form-group">
+									<span class="col-sm-3 glyphicon glyphicon-remove"></span>
+									<div class="col-sm-9 form-group">
 										<form action="{% url 'active_monthly_pay' %}" method="post">
 											{% csrf_token %}
 											<input type="hidden" name="id" value={{ needful.id }}>
@@ -148,11 +156,11 @@
 				{% endif %}
 			</div>
 		</div>
-{#		{% if helpers_active %}#}
-{#		<div role="tabpanel" class="tab-pane active" id="helpers">#}
-{#		{% else %}#}
+		{% if helpers_active %}
+		<div role="tabpanel" class="tab-pane active" id="helpers">
+		{% else %}
 		<div role="tabpanel" class="tab-pane" id="helpers">
-{#		{% endif %}#}
+		{% endif %}
 		<h1> مددکاران</h1><br>
 			<div class="col-sm-7">
 				{% if helpers_num %}
@@ -169,13 +177,32 @@
 {#									{% endif %}#}
 								</div>
 							</li>
-							<br>
 						{% endfor %}
 					</ul>
 				{% else %}
 					<div class="alert alert-warning">
 						<strong>مددکاری در سانامه وجود ندارد.</strong>
 					</div>
+				{% endif %}
+				<h3> حداقل تعداد نیازمند تحت حمایت یک مددکار: {{ min_helper }}</h3>
+				<form action="{% url 'min_helper_change' %}" method="post">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="value"> حداقل جدید </label><input class="form-control" type="number" id="value" name="value" >
+						<button type="submit" class="btn btn-sm btn-default">تغییر حداقل</button>
+					</div>
+				</form>
+				{% if min_helper_change_success %}
+					<div class="alert alert-success">
+						<strong>تغییر حداقل با موفقیت انجام شد.</strong>
+					</div>
+					<br>
+				{% endif %}
+				{% if min_helper_change_failed%}
+					<div class="alert alert-danger">
+						<strong>خطا</strong>لطفا یک عدد مثبت وارد کنید.
+					</div>
+					<br>
 				{% endif %}
 			</div>
 		</div>
