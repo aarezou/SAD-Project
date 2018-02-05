@@ -42,7 +42,7 @@
 		<div role="tabpanel" class="tab-pane" id="info">
 		{% endif %}
 			<div class="col-sm-7 form-group">
-				<form class="form-horizontal" action="" method="POST">
+				<form class="form-horizontal" action="{% url 'change_info' %}" method="POST">
 					{% csrf_token %}
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="first_name">نام</label>
@@ -179,27 +179,23 @@
 				<br>
 				<div class="col-sm-7">
 				{% if needs %}
-					<div class="table-responsive">
-						<table class="table table-hover">
-							<tbody>
-								{% for need in needs %}
-									<tr>
-										<td>{{ need.desc }}</td>
-										<td>
-											<form action="{% url 'needCare' %}" method="post">
-												{% csrf_token %}
-												<div class="form-group">
-													<input type="hidden" name="need" value={{ need.id }}>
-													<button type="submit" class="btn btn-sm btn-default">درخواست رفع نیاز</button></a>
-												</div>
-											</form>
-										</td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					</div>
-					<br><br>
+					<ul class="list_group" style="height: 400px; overflow: scroll; overflow-x: hidden">
+						{% for need in needs %}
+							<li class="list-group-item">
+								<div class="col-sm-9"> {{ need.desc }} </div>
+								<div class="col-sm-3">
+									<form action="{% url 'needCare' %}" method="post">
+										{% csrf_token %}
+										<div class="form-group">
+											<input type="hidden" name="need" value={{ need.id }}>
+											<button type="submit" class="btn btn-xs btn-default">درخواست رفع نیاز</button></a>
+										</div>
+									</form>
+								</div>
+							<br>
+							</li>
+						{% endfor %}
+					</ul>
 					{% if need_care_success %}
 						<div class="alert alert-success">
 							<strong>درخواست رفع نیاز شما با موفقیت ثبت شد.</strong>
