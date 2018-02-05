@@ -2,7 +2,7 @@
 
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
-		{% if not your_needfuls_active and not other_needfuls_active %}
+		{% if not your_needfuls_active and not other_needfuls_active and not register_active %}
 		<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
 		{% else %}
 		<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
@@ -28,7 +28,7 @@
 
 {% block content %}
 	<div class="tab-content">
-		{% if not your_needfuls_active and not other_needfuls_active %}
+		{% if not your_needfuls_active and not other_needfuls_active and not register_active %}
 			<div role="tabpanel" class="tab-pane active" id="info">
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="info">
