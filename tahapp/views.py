@@ -62,16 +62,20 @@ def needful_view(request):
 
 
 def register(request):
-	if request.user.is_authenticated:
+	profile1 = get_profile(request)
+	if profile1 and (profile1.role == 'D' or profile1.role == 'N'):
 		return redirect('index')
+
 	context = {'register_active': True}
 	if request.method == 'POST':
+		print('not even post')
 		role = request.POST.get('role')
 		password_repeat = request.POST.get('password_repeat')
 		form = RegisterForm(request.POST)
 		if not role:
 			context['no_role'] = True
 		elif password_repeat and form.is_valid():
+			print('everything is valid')
 			username = form.cleaned_data['username']
 			password = form.cleaned_data['password']
 			email = form.cleaned_data['email']
@@ -81,6 +85,7 @@ def register(request):
 			elif password != password_repeat:
 				context['unequal_passwords'] = True
 			else:
+				print('yess')
 				user = User.objects.create_user(username=username, email=email, password=password)
 				profile = Profile.objects.create(user=user, role=role[0])
 				if role[0] == 'H':
@@ -89,10 +94,17 @@ def register(request):
 					Donor.objects.create(profile=profile)
 				else:
 					Needful.objects.create(profile=profile)
-				context['success'] = True
+				context['register_success'] = True
 		else:
 			context['form_not_valid'] = True
-	return render(request, 'tahapp/index.html', context)
+
+	if not profile1:
+		return render(request, 'tahapp/index.html', context)
+	elif profile1.role == 'A':
+		print('here srsly!!!!')
+		return admin_view2(request, context)
+	elif profile1.role == 'H':
+		return helper_view2(request, context)
 
 
 def change_info(request):
@@ -104,19 +116,19 @@ def change_info(request):
 				first_name = request.POST.get('first_name')
 				last_name = request.POST.get('last_name')
 				bio = request.POST.get('bio')
-				#print('jere')
+				print('jere')
 				if profile.user.first_name != first_name or profile.user.last_name != last_name or profile.bio != bio:
-					#print('not here')
+					print('not here')
 					for change in ChangeInfoRequest.objects.filter(profile=profile):
 						change.delete()
 					ChangeInfoRequest.objects.create(profile=profile, first_name=first_name, last_name=last_name, bio=bio)
-					context = {'change_info_success': True}
+					context = {'info_change_success': True}
 					if profile.role == 'N':
 						return needful_view2(request, context)
 					elif profile.role == 'H':
-						helper_view2(request, context)
+						return helper_view2(request, context)
 					else:
-						donor_view2(request, context)
+						return donor_view2(request, context)
 	return redirect('index')
 
 
@@ -511,13 +523,21 @@ def min_helper_change(request):
 	return redirect('index')
 
 
+def get_profile(request):
+	if not request.user.is_authenticated:
+		return None
+	try:
+		return Profile.objects.filter(user=request.user)[0]
+	except Exception:
+		return None
+
+
 def get_needful(request):
 	if not request.user.is_authenticated:
 		return None
 	try:
 		profile = Profile.objects.filter(user=request.user)[0]
-		needful = Needful.objects.filter(profile=profile)[0]
-		return needful
+		return Needful.objects.filter(profile=profile)[0]
 	except Exception:
 		return None
 
