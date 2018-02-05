@@ -85,8 +85,8 @@
 						{% for needful in confirmed_needfuls %}
 						<a href="../admin_needful_info/{{needful.id}}/" >
 							<li class="list-group-item">
-								<div class="col-sm-10">{{ needful.profile.user.username }} </div>
-								<div class="col-sm-2">
+								<div class="col-sm-9">{{ needful.profile.user.username }} </div>
+								<div class="col-sm-3">
 									{% if needful.monthly_pay %}
 									<span class="glyphicon glyphicon-ok"></span>
 									{% else %}
@@ -123,8 +123,8 @@
 					<ul class="list-group" style="height: 400px; overflow: scroll; overflow-x: hidden">
 						{% for needful in other_needfuls %}
 							<li class="list-group-item">
-								<div class="col-sm-10"> {{ needful.profile.user.username }} </div>
-								<div class="col-sm-2 form-group">
+								<div class="col-sm-9"> {{ needful.profile.user.username }} </div>
+								<div class="col-sm-3 form-group">
 									<form action="{% url 'admin_needful_confirm' %}" method="post">
 										{% csrf_token %}
 											<input type="hidden" name="id" value={{ needful.id }}>

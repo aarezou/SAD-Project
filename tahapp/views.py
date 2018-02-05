@@ -438,11 +438,12 @@ def active_monthly_pay(request):
 		return redirect('index')
 	if request.method == 'POST':
 		id = request.POST.get('id')
-		needfuls = Needful.objects.get(id=id, monthly_paid=False)
+		needfuls = Needful.objects.filter(id=id, monthly_paid=False)
 		if needfuls.exists():
 			needful = needfuls[0]
 			needful.monthly_paid = True
 			needful.save()
+			return admin_view2(request, {'confirmed_needfuls_active': True, 'monthly_pay_success': True})
 	return redirect('index')
 
 
