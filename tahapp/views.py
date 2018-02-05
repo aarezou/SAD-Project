@@ -377,10 +377,18 @@ def admin_needful_info2(request, needful_id,  context):
 	admin = get_admin(request)
 	if not admin:
 		return redirect('index')
+	needfuls = Needful.objects.filter(id=needful_id)
+	if not needfuls.exists():
+		return redirect('index')
+	needful = needfuls[0]
+	context['needful'] = needful
+	context['achievements'] = Achievement.objects.filter(needful=needful)
+	context['needs'] = Need.objects.filter(needful=needful).order_by('done')
+	return render(request, 'tahapp/admin_needful_info.html', context)
 
 
 def admin_needful_info(request, needful_id):
-	return admin_needful_info2(request, {})
+	return admin_needful_info2(request, needful_id, {})
 
 
 def admin_needful_confirm(request):
@@ -398,6 +406,28 @@ def admin_needful_confirm(request):
 				needful.is_verified = True
 				needful.save()
 				return admin_view2(request, {'other_needfuls_active': True, 'other_needfuls_success': True})
+	return redirect('index')
+
+
+def pay_need_admin(request):
+	admin = get_admin(request)
+	if not admin:
+		return redirect('index')
+	if request.method == 'POST':
+		need_id = request.POST.get('id')
+		if need_id:
+			needs = Need.objects.filter(id=need_id, done=False).exclude(needful=None)
+			if needs:
+				need = needs[0]
+				foundation = Foundation.objects.all()[0]
+				if need.value <= foundation.credit:
+					foundation.credit -= need.value
+					foundation.save()
+					need.done = True
+					need.save()
+					return admin_needful_info2(request, need.needful.id, {'pay_success': True})
+				else
+					return admin_needful_info2(request, need.needful.id, {'pay_failed': True})
 	return redirect('index')
 
 

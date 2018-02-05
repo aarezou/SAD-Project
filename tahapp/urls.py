@@ -27,4 +27,5 @@ urlpatterns = [
 	path('admin_view/', views.admin_view, name='admin_view'),
 	path('admin_needful_confirm/', views.admin_needful_confirm, name='admin_needful_confirm'),
 	path('admin_needful_info/<int:needful_id>/', views.admin_needful_info, name='admin_needful_info'),
+	path('pay_need_admin/', views.pay_need_admin, name='pay_need_admin'),
 ]
