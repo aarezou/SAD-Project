@@ -31,4 +31,5 @@ urlpatterns = [
 	path('active_monthly_pay/', views.active_monthly_pay, name='active_monthly_pay'),
 	path('deactive_monthly_pay/', views.deactive_monthly_pay, name='deactive_monthly_pay'),
 	path('min_helper_change/', views.min_helper_change, name='min_helper_change'),
+	path('change_info/', views.change_info, name='change_info'),
 ]

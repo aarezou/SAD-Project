@@ -104,7 +104,9 @@ def change_info(request):
 				first_name = request.POST.get('first_name')
 				last_name = request.POST.get('last_name')
 				bio = request.POST.get('bio')
+				#print('jere')
 				if profile.user.first_name != fn or profile.user.last_name != ln or profile.bio != bio:
+					#print('not here')
 					for change in ChangeInfoRequest.objects.filter(profile=profile):
 						change.delete()
 					ChangeInfoRequest.objects.create(profile=profile, first_name=first_name, last_name=last_name, bio=bio)
