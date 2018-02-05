@@ -2,7 +2,7 @@
 
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
-		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active and not register_active and not confim_change_active %}
+		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active and not register_active and not confirm_change_active %}
 			<li class="active"><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
 		{% else %}
 			<li><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
@@ -28,7 +28,7 @@
 		{% else %}
 			<li><a href="#register" role="tab" data-toggle="tab"> ثبت‌نام کاربر جدید</a></li>
 		{% endif %}
-		{% if confim_change_active %}
+		{% if confirm_change_active %}
 			<li class="active"><a href="#confirm_change" role="tab" data-toggle="tab">تایید درخواست‌های تغییر مشخصات</a></li>
 		{% else %}
 			<li><a href="#confirm_change" role="tab" data-toggle="tab"> تایید درخواست‌های تغییر مشخصات</a></li>
@@ -292,7 +292,7 @@
 		<div role="tabpanel" class="tab-pane" id="confirm_change">
 		{% endif %}
 			<h1>درخواست‌های تغییر مشخصات </h1><br>
-			<div class="col-sm-7">
+			<div class="col-sm-12">
 				<ul class="list-group">
 					{% if changes %}
 						{% for change in changes %}
