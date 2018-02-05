@@ -12,6 +12,7 @@ class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	role = models.CharField(max_length=1, choices=ROLE_CHOICES)
 	bio = models.CharField(max_length=100, default='')
+	email_enabled = models.BooleanField(default=False)
 
 
 class Donor(models.Model):

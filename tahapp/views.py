@@ -133,17 +133,30 @@ def change_info(request):
 	return redirect('index')
 
 
+def toggle_email_enabled(request):
+	profile = get_profile(request)
+	if profile:
+		profile.email_enabled = not profile.email_enabled
+		profile.save()
+	return redirect('index')
+
+
 def submitLetter(request):
 	needful = get_needful(request)
 	if not needful:
 		return redirect('index')
 	context = {'submit_letter_active': True}
-	if request.method == 'POST':
+	if request.method == 'POST' and needful.helper:
 		receiver = request.POST.get('receiver')
 		txt = request.POST.get('txt')
 		if txt and receiver and txt != '':
-			TnxLetter.objects.create(needful=needful, donor=needful.donor, helper=needful.helper, context=txt, is_to_donor=(receiver=="Donor"))
+			TnxLetter.objects.create(needful=needful, donor=needful.donor, helper=needful.helper, context=txt,
+				is_to_donor=(receiver == "Donor"))
 			context['submit_letter_success'] = True
+			if needful.helper.profile.email_enabled:
+				email = EmailMessage('New email', 'You have recieved a new email from ' + needful.profile.user.username + '.',
+					to=[needful.helper.profile.user.email])
+				email.send()
 		else:
 			context['submit_letter_failed'] = True
 	return needful_view2(request, context)
@@ -241,6 +254,11 @@ def forward_letter(request):
 				letter = letters[0]
 				letter.is_forwarded = True
 				letter.save()
+				needful = letter.needful
+				if needful.donor and needful.donor.profile.email_enabled:
+					email = EmailMessage('New email', 'You have recieved a new email from ' + needful.profile.user.username + '.',
+						to=[needful.profile.user.email])
+					email.send()
 				return helper_needful_info2(request, letter.needful.id, {'forward_letter_success': True})
 	return redirect('index')
 

@@ -34,4 +34,5 @@ urlpatterns = [
 	path('change_info/', views.change_info, name='change_info'),
 	path('helper_edit_need/', views.helper_edit_need, name='helper_edit_need'),
 	path('confirm_change_info/', views.confirm_change_info, name='confirm_change_info'),
+	path('toggle_email_enabled/', views.toggle_email_enabled, name='toggle_email_enabled'),
 ]
