@@ -7,6 +7,7 @@
 		{% else %}
 		<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
 		{% endif %}
+		<li><a href="#money" role="tab" data-toggle="tab">گزارش وجوه پرداختی</a></li>
 		{% if your_needfuls_active %}
 		<li class="active"><a href="#confirmed_needfuls" role="tab" data-toggle="tab"> نیازمندان تایید شده</a></li>
 		{% else %}
@@ -17,11 +18,11 @@
 		{% else %}
 		<li><a href="#other_needfuls" role="tab" data-toggle="tab">نیازمندان تایید نشده</a></li>
 		{% endif %}
-		{% if helper_active %}
-		<li class="active"><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>
-		{% else %}
+{#		{% if helper_active %}#}
+{#		<li class="active"><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>#}
+{#		{% else %}#}
 		<li><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>
-		{% endif %}
+{#		{% endif %}#}
 		<li><a class="text-danger" href={{ '../logout' }}>خروج از حساب کاربری</a></li>
 	</ul><br>
 {% endblock %}
@@ -38,18 +39,69 @@
 				<p>اسم</p>
 			</div>
 		</div>
+		<div role="tabpanel" class="tab-pane" id="money">
+			<h1>گزارش وجوه پرداختی </h1><br>
+			<div class="col-sm-7">
+				{% if donations %}
+					<div class="table-responsive" style="height: 400px; overflow: scroll; overflow-x: hidden">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>مقدار</th>
+									<th>نام همیار</th>
+									<th>تاریخ</th>
+									<th>زمان</th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for donation in donations %}
+								<tr>
+									<td >{{ donation.value }}</td>
+									<td >{{ donation.donor.profile.user.username }}</td>
+									<td >{{ donation.date|date }}</td>
+									<td >{{ donation.date|time }}</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				{% else %}
+					<div class="alert alert-warning">
+						<strong>پرداختی به سامانه انجام نشده است.</strong>
+					</div>
+				{% endif %}
+			</div>
+		</div>
 		{% if confirmed_needfuls_active %}
 		<div role="tabpanel" class="tab-pane active" id="confirmed_needfuls">
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="confirmed_needfuls">
 		{% endif %}
+			<h1>نیازمندان تایید شده</h1>
 			<div class="col-sm-7">
-				<h1>نیازمندان تایید شده</h1>
 					<br>
 				{% if confirmed_needfuls %}
 					<ul class="list-group" style="height: 400px; overflow: scroll; overflow-x: hidden">
 						{% for needful in confirmed_needfuls %}
-						<a href="../admin_needful_info/{{needful.id}}/" ><li class="list-group-item">{{ needful.profile.user.username }} </li></a>
+						<a href="../admin_needful_info/{{needful.id}}/" >
+							<li class="list-group-item">
+								<div class="col-sm-10">{{ needful.profile.user.username }} </div>
+								<div class="col-sm-2">
+									{% if needful.monthly_pay %}
+									<span class="glyphicon glyphicon-ok"></span>
+									{% else %}
+									<div class="form-group">
+										<form action="{% url 'active_monthly_pay' %}" method="post">
+											{% csrf_token %}
+											<input type="hidden" name="id" value={{ needful.id }}>
+											<button type="submit" class="btn btn-xs btn-default">فعال کردن پرداخت ماهیانه</button>
+										</form>
+									</div>
+									{% endif %}
+								</div>
+								<br>
+							</li>
+						</a>
 						{% endfor %}
 					</ul>
 				{% else %}
@@ -64,29 +116,25 @@
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="other_needfuls">
 		{% endif %}
+			<h1>نیازمندان تایید نشده</h1>
 			<div class="col-sm-7">
-				<h1>نیازمندان تایید نشده</h1>
 				<br>
 				{% if other_needfuls %}
-					<div class="table-responsive">
-						<table class="table table-hover">
-							<tbody>
-								{% for needful in other_needfuls %}
-									<tr>
-										<td>{{ needful.profile.user.username }}</td>
-										<td>
-											<form action="{% url 'admin_needful_confirm' %}" method="post">
-												{% csrf_token %}
-												<div class="form-group">
-													<input type="hidden" name="id" value={{ needful.id }}>
-													<button type="submit" class="btn btn-sm btn-default">تایید نیازمند</button>
-												</div>
-											</form>
-										</td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
+					<ul class="list-group" style="height: 400px; overflow: scroll; overflow-x: hidden">
+						{% for needful in other_needfuls %}
+							<li class="list-group-item">
+								<div class="col-sm-10"> {{ needful.profile.user.username }} </div>
+								<div class="col-sm-2 form-group">
+									<form action="{% url 'admin_needful_confirm' %}" method="post">
+										{% csrf_token %}
+											<input type="hidden" name="id" value={{ needful.id }}>
+											<button type="submit" class="btn btn-xs btn-default">تایید نیازمند</button>
+									</form>
+								</div>
+							<br>
+							</li>
+						{% endfor %}
+					</ul>
 					</div>
 					<br><br>
 					{% if other_needfuls_success %}
@@ -101,26 +149,28 @@
 				{% endif %}
 			</div>
 		</div>
-		{% if helpers_active %}
-		<div role="tabpanel" class="tab-pane active" id="helpers">
-		{% else %}
+{#		{% if helpers_active %}#}
+{#		<div role="tabpanel" class="tab-pane active" id="helpers">#}
+{#		{% else %}#}
 		<div role="tabpanel" class="tab-pane" id="helpers">
-		{% endif %}
+{#		{% endif %}#}
+		<h1> مددکاران</h1><br>
 			<div class="col-sm-7">
-				<h1> مددکاران</h1><br>
 				{% if helpers_num %}
-					<ul class="list_group" id="hlprs">
+					<ul class="list-group" style="height: 400px; overflow: scroll; overflow-x: hidden">
 						{% for helper, num in helpers_num %}
-						<li class="list_group_item">
-							<div class="col-sm-10>">{{helper.profile.user.username}}</div>
-							<div class="col-sm-2>">
-								{% if num < min_needful %}
-								<div class="alert alert-danger">{{ num }}</div>
-								{% else %}
-								<div class="alert alert-success">{{ num }}</div>
-								{% endif %}
-							</div>
-						</li>
+							<li class="list-group-item">
+								<div class="col-sm-5>"> {{helper.profile.user.username}} </div>
+								<div class="col-sm-1">
+									{{ num }}
+{#									{% if num < min_needful %}#}
+{#									{{ num }}#}
+{#									{% else %}#}
+{#									{{ num }}#}
+{#									{% endif %}#}
+								</div>
+								<br>
+							</li>
 						{% endfor %}
 					</ul>
 				{% else %}
