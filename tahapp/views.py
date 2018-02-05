@@ -282,6 +282,28 @@ def submit_need_helper(request):
 	return redirect('index')
 
 
+def helper_needful_view(request):
+	helper = get_helper(request)
+	if helper and request.method == 'POST':
+		id = request.POST.get('id')
+		desc = request.POST.get('desc')
+		value = request.POST.get('value')
+		is_urgent = True if request.POST.get('is_urgent') else False
+		done = True if request.POST.get('done') else False
+		needs = Need.objects.filter(id=id, needful__helper=helper)
+		if desc and value and needs.exists():
+			value = int(value)
+			if value >= 0:
+				need = needs[0]
+				need.desc = desc
+				need.is_urgent = is_urgent
+				need.done = done
+				need.value = int(value)
+				need.save()
+				return helper_needful_info2(request, need.needful.id, {})
+	return redirect('index')
+
+
 def donor_view2(request, context):
 	donor = get_donor(request)
 	if not donor:
