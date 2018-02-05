@@ -26,4 +26,5 @@ urlpatterns = [
 	path('donate/', views.donate, name='donate'),
 	path('admin_view/', views.admin_view, name='admin_view'),
 	path('admin_needful_confirm/', views.admin_needful_confirm, name='admin_needful_confirm'),
+	path('admin_needful_info/<int:needful_id>/', views.admin_needful_info, name='admin_needful_info'),
 ]

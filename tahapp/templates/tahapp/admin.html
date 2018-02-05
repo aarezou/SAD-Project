@@ -43,26 +43,28 @@
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="confirmed_needfuls">
 		{% endif %}
-		<br>
-			<h1> نیازمندان تایید شده</h1><br>
-			{% if confirmed_needfuls %}
-				<ul class="list-group col-sm-3" style="height: 400px; overflow: scroll; overflow-x: hidden">
-					{% for needful in confirmed_eedfuls %}
-					<li class="list-group-item"><a href="../admin_needful_info/{{needful.id}}/" >{{ needful.profile.user.username }} </a></li>
-					{% endfor %}
-				</ul>
-			{% else %}
-				<div class="col-sm-5 alert alert-warning">
-					<strong>نیازمند تایید شده‌ای در سانامه وجود ندارد.</strong>
-				</div>
-			{% endif %}
+			<div class="col-sm-7">
+				<h1>نیازمندان تایید شده</h1>
+					<br>
+				{% if confirmed_needfuls %}
+					<ul class="list-group" style="height: 400px; overflow: scroll; overflow-x: hidden">
+						{% for needful in confirmed_needfuls %}
+						<a href="../admin_needful_info/{{needful.id}}/" ><li class="list-group-item">{{ needful.profile.user.username }} </li></a>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<div class="alert alert-warning">
+						<strong>نیازمند تایید شده‌ای در سانامه وجود ندارد.</strong>
+					</div>
+				{% endif %}
+			</div>
 		</div>
 		{% if other_needfuls_active %}
 		<div role="tabpanel" class="tab-pane active" id="other_needfuls">
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="other_needfuls">
 		{% endif %}
-			<div class="col-sm-5">
+			<div class="col-sm-7">
 				<h1>نیازمندان تایید نشده</h1>
 				<br>
 				{% if other_needfuls %}
@@ -76,7 +78,7 @@
 											<form action="{% url 'admin_needful_confirm' %}" method="post">
 												{% csrf_token %}
 												<div class="form-group">
-													<input type="hidden" name="needful" value={{ needful.id }}>
+													<input type="hidden" name="id" value={{ needful.id }}>
 													<button type="submit" class="btn btn-sm btn-default">تایید نیازمند</button>
 												</div>
 											</form>
@@ -104,28 +106,29 @@
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="helpers">
 		{% endif %}
-		<br>
-			<h1> مددکاران</h1><br>
-			{% if helpers %}
-				<ul class="list_group col-sm-7" style="height: 400px; overflow: scroll; overflow-x: hidden">
-					{% for helper, num in helpers_num %}
-					<li class="list_group_item">
-						<div class="col-sm-10>">{{helper.profile.user.username}}</div>
-						<div class="col-sm-2>">
-							{% if num < min_needful %}
-							<div class="alert alert-danger">{{ num }}</div>
-							{% else %}
-							<div class="alert alert-success">{{ num }}</div>
-							{% endif %}
-						</div>
-					</li>
-					{% endfor %}
-				</ul>
-			{% else %}
-				<div class="col-sm-5 alert alert-warning">
-					<strong>مددکاری در سانامه وجود ندارد.</strong>
-				</div>
-			{% endif %}
+			<div class="col-sm-7">
+				<h1> مددکاران</h1><br>
+				{% if helpers_num %}
+					<ul class="list_group" id="hlprs">
+						{% for helper, num in helpers_num %}
+						<li class="list_group_item">
+							<div class="col-sm-10>">{{helper.profile.user.username}}</div>
+							<div class="col-sm-2>">
+								{% if num < min_needful %}
+								<div class="alert alert-danger">{{ num }}</div>
+								{% else %}
+								<div class="alert alert-success">{{ num }}</div>
+								{% endif %}
+							</div>
+						</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<div class=" alert alert-warning">
+						<strong>مددکاری در سانامه وجود ندارد.</strong>
+					</div>
+				{% endif %}
+			</div>
 		</div>
 	</div>
 {% endblock %}

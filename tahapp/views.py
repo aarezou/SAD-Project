@@ -359,8 +359,8 @@ def admin_view2(request, context):
 	admin = get_admin(request)
 	if not admin:
 		return redirect('index')
-	context['confirm_needfuls'] = Needful.objects.filter(is_verified=False)
-	context['other_needfuls'] = Needful.objects.filter(is_verified=True)
+	context['confirmed_needfuls'] = Needful.objects.filter(is_verified=True)
+	context['other_needfuls'] = Needful.objects.filter(is_verified=False)
 	context['donations'] = Donation.objects.all()
 	context['credit'] = Foundation.objects.get(id=1)
 	context['helpers_num'] = []
@@ -373,13 +373,13 @@ def admin_view(request):
 	return admin_view2(request, {})
 
 
-def admin_needful_info2(request, context):
+def admin_needful_info2(request, needful_id,  context):
 	admin = get_admin(request)
 	if not admin:
 		return redirect('index')
 
 
-def admin_needful_info(request):
+def admin_needful_info(request, needful_id):
 	return admin_needful_info2(request, {})
 
 
@@ -388,11 +388,12 @@ def admin_needful_confirm(request):
 	if not admin:
 		return redirect('index')
 	if request.method == 'POST':
-		context = ['con']
-		id = request.POST.gt('id')
+		id = request.POST.get('id')
 		if id:
+			print("here")
 			needfuls = Needful.objects.filter(id=id, is_verified=False)
 			if needfuls.exists():
+				print("not here")
 				needful = needfuls[0]
 				needful.is_verified = True
 				needful.save()
