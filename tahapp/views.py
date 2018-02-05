@@ -282,7 +282,7 @@ def submit_need_helper(request):
 	return redirect('index')
 
 
-def helper_needful_view(request):
+def helper_edit_need(request):
 	helper = get_helper(request)
 	if helper and request.method == 'POST':
 		id = request.POST.get('id')
