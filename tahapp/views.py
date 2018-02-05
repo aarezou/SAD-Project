@@ -363,7 +363,7 @@ def admin_view2(request, context):
 	context['confirmed_needfuls'] = Needful.objects.filter(is_verified=True)
 	context['other_needfuls'] = Needful.objects.filter(is_verified=False)
 	context['donations'] = Donation.objects.all()
-	context['credit'] = Foundation.objects.get(id=1)
+	context['credit'] = Foundation.objects.all()[0].credit
 	context['helpers_num'] = []
 	for helper in Helper.objects.all():
 		context['helpers_num'].append((helper, Needful.objects.filter(helper=helper).count()))
@@ -385,7 +385,7 @@ def admin_needful_info2(request, needful_id,  context):
 	context['needful'] = needful
 	context['achievements'] = Achievement.objects.filter(needful=needful)
 	context['needs'] = Need.objects.filter(needful=needful).order_by('done')
-	context['min_helper'] = Foundation.objects.all()[0].credit
+	context['min_helper'] = Foundation.objects.all()[0].min_needfuls
 	return render(request, 'tahapp/admin_needful_info.html', context)
 
 
