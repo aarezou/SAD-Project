@@ -135,7 +135,7 @@ def change_info(request):
 
 def toggle_email_enabled(request):
 	profile = get_profile(request)
-	if profile:
+	if profile and request.method == 'POST':
 		profile.email_enabled = not profile.email_enabled
 		profile.save()
 	return redirect('index')
