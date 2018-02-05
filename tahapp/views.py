@@ -484,6 +484,7 @@ def admin_needful_info2(request, needful_id,  context):
 	context['needful'] = needful
 	context['achievements'] = Achievement.objects.filter(needful=needful)
 	context['needs'] = Need.objects.filter(needful=needful).order_by('done')
+	context['reports'] = Report.objects.all()
 	return render(request, 'tahapp/admin_needful_info.html', context)
 
 
