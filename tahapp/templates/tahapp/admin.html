@@ -2,7 +2,7 @@
 
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
-		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active %}
+		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active and not register_active%}
 			<li class="active"><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
 		{% else %}
 			<li><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
@@ -22,6 +22,11 @@
 			<li class="active"><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>
 		{% else %}
 			<li><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>
+		{% endif %}
+		{% if register_active %}
+			<li class="active"><a href="#register" role="tab" data-toggle="tab">ثبت‌نام کاربر جدید</a></li>
+		{% else %}
+			<li><a href="#register" role="tab" data-toggle="tab"> ثبت‌نام کاربر جدید</a></li>
 		{% endif %}
 		<li><a class="text-danger" href={{ '../logout' }}>خروج از حساب کاربری</a></li>
 	</ul><br>
@@ -204,5 +209,75 @@
 				{% endif %}
 			</div>
 		</div>
+		{% if register_active %}
+		<div role="tabpanel" class="tab-pane active" id="register">
+		{% else %}
+		<div role="tabpanel" class="tab-pane" id="register">
+		{% endif %}
+			<div class="col-sm-7">
+				{% if register_success %}
+					<div class="alert alert-success">
+						<strong>ثبت نام کاربر با موفقیت انجام شد.</strong>
+					</div>
+				{% else %}
+					<form id="register-form" class="form-horizontal" action="{% url 'register' %}" method="POST">
+						{% csrf_token %}
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="email">پست الکترونیک</label>
+							<div class="col-sm-10">
+								<input type="email" class="form-control" name="email" placeholder="email">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="username">نام کاربری</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="username" placeholder="نام کاربری">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="pwd">کلمه‌ی عبور</label>
+							<div class="col-sm-10">
+								<input type="password" class="form-control" name="password" placeholder="کلمه‌ی عبور">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="pwd">تکرار کلمه‌ی عبور</label>
+							<div class="col-sm-10">
+								<input type="password" class="form-control" name="password_repeat" placeholder="تکرار کلمه‌ی عبور">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" value="Needful">نیازمند</label>
+							<label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" value="Helper">مددکار</label>
+							<label class="col-sm-offset-3 radio-inline"><input type="radio" name="role" value="Donor">همیار</label>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-10">
+								<button type="submit" class="btn btn-default">ثبت نام</button>
+							</div>
+						</div>
+					</form>
+					{% if no_role or username_taken or unequal_passwords or form_not_valid %}
+						<div class="alert alert-danger">
+							<strong>خطا!</strong>
+							{% if no_role %}
+								نقش انتخاب نشده است.
+								<br>
+							{% endif %}
+							{% if username_taken %}
+								نام کاربری انخاب شده تکراری است.
+								<br>
+							{% endif %}
+							{% if unequal_passwords%}
+								کلمه‌ی عبور با تکرار آن همخوانی ندارد.
+								<br>
+							{% endif %}
+							{% if form_not_valid %}
+								لطفا همه‌ی قسمت‌ها را پر کنید.
+								<br>
+							{% endif %}
+						</div>
+					{% endif %}
+				{% endif %}
 	</div>
 {% endblock %}
