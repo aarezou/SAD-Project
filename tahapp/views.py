@@ -457,9 +457,7 @@ def admin_needful_info(request, needful_id):
 
 def admin_needful_confirm(request):
 	admin = get_admin(request)
-	if not admin:
-		return redirect('index')
-	if request.method == 'POST':
+	if admin and request.method == 'POST':
 		id = request.POST.get('id')
 		if id:
 			needfuls = Needful.objects.filter(id=id, is_verified=False)
@@ -468,6 +466,24 @@ def admin_needful_confirm(request):
 				needful.is_verified = True
 				needful.save()
 				return admin_view2(request, {'other_needfuls_active': True, 'other_needfuls_success': True})
+	return redirect('index')
+
+
+def confirm_change_info(request):
+	admin = get_admin(request)
+	if admin and request.method == 'POST':
+		id = request.POST.get('id')
+		changes = ChangeInfoRequest.objects.filter(id=id)
+		if changes.exists():
+			change = changes[0]
+			profile = change.profile
+			profile.bio = change.bio
+			profile.save()
+			user = profile.user
+			user.first_name = change.first_name
+			user.last_name = change.last_name
+			user.save()
+			return admin_view2(request, {'confirm_change_active': True})
 	return redirect('index')
 
 

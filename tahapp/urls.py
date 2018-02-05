@@ -33,4 +33,5 @@ urlpatterns = [
 	path('min_helper_change/', views.min_helper_change, name='min_helper_change'),
 	path('change_info/', views.change_info, name='change_info'),
 	path('helper_edit_need/', views.helper_edit_need, name='helper_edit_need'),
+	path('confirm_change_info/', views.confirm_change_info, name='confirm_change_info'),
 ]
