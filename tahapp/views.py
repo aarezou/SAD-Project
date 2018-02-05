@@ -427,6 +427,7 @@ def admin_view2(request, context):
 	context['donations'] = Donation.objects.all()
 	context['credit'] = Foundation.objects.all()[0].credit
 	context['min_helper'] = Foundation.objects.all()[0].min_needfuls
+	context['changes'] = ChangeInfoRequest.objects.filter(done=False)
 	context['helpers_num'] = []
 	for helper in Helper.objects.all():
 		context['helpers_num'].append((helper, Needful.objects.filter(helper=helper).count()))
@@ -473,7 +474,7 @@ def confirm_change_info(request):
 	admin = get_admin(request)
 	if admin and request.method == 'POST':
 		id = request.POST.get('id')
-		changes = ChangeInfoRequest.objects.filter(id=id)
+		changes = ChangeInfoRequest.objects.filter(id=id, done=False)
 		if changes.exists():
 			change = changes[0]
 			profile = change.profile
@@ -483,6 +484,8 @@ def confirm_change_info(request):
 			user.first_name = change.first_name
 			user.last_name = change.last_name
 			user.save()
+			change.done = True
+			change.save()
 			return admin_view2(request, {'confirm_change_active': True})
 	return redirect('index')
 

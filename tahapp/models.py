@@ -80,3 +80,4 @@ class ChangeInfoRequest(models.Model):
 	last_name = models.CharField(max_length=100)
 	bio = models.CharField(max_length=100)
 	date = models.DateTimeField(auto_now_add=True)
+	done = models.BooleanField(default=False)
