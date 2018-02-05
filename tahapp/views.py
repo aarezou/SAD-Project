@@ -467,7 +467,7 @@ def min_helper_change(request):
 		return redirect('index')
 	if request.method == 'POST':
 		context = {'helpers_active': True}
-		value = request.POST.get('min_helper_value')
+		value = int(request.POST.get('min_helper_value'))
 		if value and value >= 0:
 			foundation = Foundation.objects.all()[0]
 			foundation.min_needfuls = value
