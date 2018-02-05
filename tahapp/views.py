@@ -385,6 +385,7 @@ def admin_needful_info2(request, needful_id,  context):
 	context['needful'] = needful
 	context['achievements'] = Achievement.objects.filter(needful=needful)
 	context['needs'] = Need.objects.filter(needful=needful).order_by('done')
+	context['min_helper'] = Foundation.objects.all()[0].credit
 	return render(request, 'tahapp/admin_needful_info.html', context)
 
 
@@ -457,6 +458,24 @@ def deactive_monthly_pay(request):
 			needful.monthly_paid = False
 			needful.save()
 			return admin_view2(request, {'confirmed_needfuls_active': True, 'monthly_pay_false_success': True})
+	return redirect('index')
+
+
+def min_helper_change(request):
+	admin = get_admin(request)
+	if not admin:
+		return redirect('index')
+	if request.method == 'POST':
+		context = {'helpers_active': True}
+		value = request.POST.get('min_helper_value')
+		if value and value >= 0:
+			foundation = Foundation.objects.all()[0]
+			foundation.min_needfuls = value
+			foundation.save()
+			context['min_helper_change_success'] = True
+		else:
+			context['min_helper_change_failed'] = True
+		return admin_view2(request, context)
 	return redirect('index')
 
 
