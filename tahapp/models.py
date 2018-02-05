@@ -11,6 +11,7 @@ class Foundation(models.Model):
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	role = models.CharField(max_length=1, choices=ROLE_CHOICES)
+	bio = models.CharField(max_length=100, default='')
 
 
 class Donor(models.Model):
@@ -71,3 +72,11 @@ class ChangeHelper(models.Model):
 class Achievement(models.Model):
 	needful = models.ForeignKey(Needful, on_delete=models.CASCADE)
 	desc = models.CharField(max_length=100)
+
+
+class ChangeInfoRequest(models.Model):
+	profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
+	first_name = models.CharField(max_length=100)
+	last_name = models.CharField(max_length=100)
+	bio = models.CharField(max_length=100)
+	date = models.DateTimeField(auto_now_add=True)

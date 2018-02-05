@@ -7,7 +7,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
 from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment,\
-	TnxLetter, ChangeHelper, Achievement, Foundation, Donation, Admin
+	TnxLetter, ChangeHelper, Achievement, Foundation, Donation, Admin, ChangeInfoRequest
 
 
 def index(request):
@@ -53,6 +53,7 @@ def needful_view2(request, context):
 		return redirect(index)
 	context['payments'] = Payment.objects.filter(need__needful=needful)
 	context['needs'] = Need.objects.filter(needful=needful, is_urgent=False, done=False)
+	context['profile'] = needful.profile
 	return render(request, 'tahapp/needful.html', context)
 
 
@@ -92,6 +93,22 @@ def register(request):
 		else:
 			context['form_not_valid'] = True
 	return render(request, 'tahapp/index.html', context)
+
+
+def change_info(request):
+	if request.method == 'POST' and request.user.is_authenticated:
+		profiles = Profile.objects.filter(user=request.user)
+		if profiles.exists():
+			profile = profiles[0]
+			if profile.role != 'A':
+				first_name = request.POST.get('first_name')
+				last_name = request.POST.get('last_name')
+				bio = request.POST.get('bio')
+				if profile.user.first_name != fn or profile.user.last_name != ln or profile.bio != bio:
+					for change in ChangeInfoRequest.objects.filter(profile=profile):
+						change.delete()
+					ChangeInfoRequest.objects.create(profile=profile, first_name=first_name, last_name=last_name, bio=bio)
+	return redirect('index')
 
 
 def submitLetter(request):
@@ -147,6 +164,7 @@ def helper_view2(request, context):
 		return redirect('index')
 	context['yourNeedfuls'] = Needful.objects.filter(helper=helper)
 	context['otherNeedfuls'] = Needful.objects.filter(helper=None, is_verified=True)
+	context['profile'] = helper.profile
 	return render(request, 'tahapp/helper.html', context)
 
 
@@ -251,6 +269,7 @@ def donor_view2(request, context):
 	context['otherNeedfuls'] = Needful.objects.filter(donor=None, is_verified=True).exclude(helper=None)
 	context['payments'] = Payment.objects.filter(donor=donor)
 	context['credit'] = donor.credit
+	context['profile'] = donor.profile
 	return render(request, 'tahapp/donor.html', context)
 
 
