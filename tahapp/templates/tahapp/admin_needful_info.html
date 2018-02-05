@@ -2,9 +2,10 @@
 
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
-		<li><a href={{ '../../helper_view/#info'}}>مشخصات</a></li>
-		<li class="active"><a href={{ '../../helper_view/#yourNeedfuls'}} > نیازمندان تحت حمایت شما <span class="glyphicon glyphicon-chevron-left"></span> {{ needful.profile.user.username }} </a></li>
-		<li><a href={{ '../../helper_view/#otherNeedfuls'}}>نیازمندان بدون حامی</a></li>
+		<li><a href={{ '../../admin_view/#info'}}>مشخصات</a></li>
+		<li class="active"><a href={{ '../../admin_view/#confirmed_needfuls'}} > نیازمندان تایید شده <span class="glyphicon glyphicon-chevron-left"></span> {{ needful.profile.user.username }} </a></li>
+		<li><a href={{ '../../admin_view/#other_needfuls'}}>نیازمندان تایید نشده</a></li>
+		<li><a href={{ '../../admin_view/#helpers'}}>مددکاران</a></li>
 		<li><a class="text-danger" href={{ '../../logout' }}>خروج از حساب کاربری</a></li>
 	</ul><br>
 {% endblock %}
@@ -13,11 +14,11 @@
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="yourNeedfuls">
 		<br>
-			<h1> نیازمندان تحت حمایت شما <span class="glyphicon glyphicon-chevron-left"></span> {{ needful.profile.user.username }} </h1>
+			<h1> نیازمندان تایید شده <span class="glyphicon glyphicon-chevron-left"></span> {{ needful.profile.user.username }} </h1>
 			<div class="col-sm-7">
 			<h3> نیازها </h3><br>
 			<div class="form-group">
-				<form  action="{% url 'submit_need_helper' %}" method="post">
+				<form  action="{% url 'submit_need_admin' %}" method="post">
 				{% csrf_token %}
 				<input type="hidden" name="id" value={{ needful.id }}>
 					<ul class="list-group" id="needs">
@@ -32,6 +33,14 @@
 								</div>
 								<div class="col-sm-2">
 									{% if need.done %} <span class="glyphicon glyphicon-ok"></span>
+									{% else %}
+									<div class="form-group">
+										<form  action="{% url 'pay_need_admin' %}" method="post">
+											{% csrf_token %}
+											<input type="hidden" name="id" value={{ need.id }}>
+											<button type="submit" class="btn btn-xs btn-default">پرداخت</button>
+										</form>
+									</div>
 									{% endif %}
 								</div>
                             <br>
@@ -79,43 +88,7 @@
 				</form>
 			</div>
 			</div>
-			<div class="col-sm-7">
-			<h3> نامه‌های تشکر </h3><br>
-				{% if letters_to_helper %}
-				<ul class="list-group" id="thanks">
-					{% for letter in letters_to_helper %}
-					<li class="list-group-item"> {{ letter.context }}</li>
-					{% endfor %}
-				</ul>
-				{% else %}
-				<div class="alert alert-warning">
-					<strong>نامه‌ی تشکری از این نیازمند برای شما وجود ندارد.</strong>
-				</div>
-				{% endif %}
-			</div>
-			<div class="col-sm-7">
-				<h3> نامه‌های در انتظار ارسال به همیار </h3><br>
-				{% if letters_to_forward %}
-					<ul class="list-group" id="thanks">
-						{% for letter in letters_to_forward %}
-							<div class="col-sm-9">
-							<li class="list-group-item"> {{ letter.context }}</li></div>
-							<form action="{% url 'forward_letter' %}" method="post">
-								{% csrf_token %}
-								<div class="form-group">
-									<input type="hidden" name="forward_letter" value={{ letter.id }}>
-									<div class="col-sm-3"> <button type="submit" class="btn btn-sm btn-default">ارسال نامه به همیار</button></div>
-								</div>
-							</form>
 
-						{% endfor %}
-					</ul>
-				{% else %}
-					<div class="alert alert-warning">
-						<strong>نامه‌ی تشکری از این نیازمند برای ارسال به همیار وجود ندارد.</strong>
-					</div>
-				{% endif %}
-			</div>
 		</div>
 	</div>
 {% endblock %}

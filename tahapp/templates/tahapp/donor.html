@@ -130,9 +130,9 @@
 		<br>
 			<h1> نیازمندان تحت حمایت شما</h1><br>
 			{% if yourNeedfuls %}
-				<ul class="nav nav-tabs nav-pills nav-stacked col-sm-3" style="height: 400px; overflow: scroll; overflow-x: hidden">
+				<ul class="list_group col-sm-3" style="height: 400px; overflow: scroll; overflow-x: hidden">
 					{% for needful in yourNeedfuls %}
-					<li><a href="../donor_needful_info/{{needful.id}}/" >{{ needful.profile.user.username }} </a></li>
+					<li class="list_group_item"><a href="../donor_needful_info/{{needful.id}}/" >{{ needful.profile.user.username }} </a></li>
 					{% endfor %}
 				</ul>
 			{% else %}

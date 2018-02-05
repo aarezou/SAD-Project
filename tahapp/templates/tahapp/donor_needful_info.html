@@ -22,13 +22,13 @@
 					{% if needs %}
 						{% for need in needs %}
 							<li class="list-group-item">
-								<div class="col-sm-8">{{ need.desc }}</div>
+								<div class="col-sm-7">{{ need.desc }}</div>
 								<div class="col-sm-2">{{ need.value }}</div>
 								<div class="col-sm-1">
 									{% if need.is_urgent %} <span class="glyphicon glyphicon-alert"></span>
 									{% endif %}
 								</div>
-								<div class="col-sm-1">
+								<div class="col-sm-2">
 									{% if need.done %} <span class="glyphicon glyphicon-ok"></span>
 									{% else %}
 									<div class="form-group">

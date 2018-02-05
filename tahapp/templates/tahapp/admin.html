@@ -1,0 +1,131 @@
+{% extends "./index.html" %}
+
+{% block navigation %}
+	<ul class="nav nav-tabs nav-pills nav-stacked">
+		{% if not your_needfuls_active and not other_needfuls_active %}
+		<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+		{% else %}
+		<li><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+		{% endif %}
+		{% if your_needfuls_active %}
+		<li class="active"><a href="#confirmed_needfuls" role="tab" data-toggle="tab"> نیازمندان تایید شده</a></li>
+		{% else %}
+		<li><a href="#confirmed_needfuls" role="tab" data-toggle="tab"> نیازمندان تایید شده</a></li>
+		{% endif %}
+		{% if other_needfuls_active %}
+		<li class="active"><a href="#other_needfuls" role="tab" data-toggle="tab">نیازمندان تایید نشده</a></li>
+		{% else %}
+		<li><a href="#other_needfuls" role="tab" data-toggle="tab">نیازمندان تایید نشده</a></li>
+		{% endif %}
+		{% if helper_active %}
+		<li class="active"><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>
+		{% else %}
+		<li><a href="#helpers" role="tab" data-toggle="tab"> مددکاران</a></li>
+		{% endif %}
+		<li><a class="text-danger" href={{ '../logout' }}>خروج از حساب کاربری</a></li>
+	</ul><br>
+{% endblock %}
+
+{% block content %}
+	<div class="tab-content">
+		{% if not your_needfuls_active and not other_needfuls_active %}
+			<div role="tabpanel" class="tab-pane active" id="info">
+		{% else %}
+		<div role="tabpanel" class="tab-pane" id="info">
+		{% endif %}
+			<div class="well">
+				<h4>اطلاعات</h4>
+				<p>اسم</p>
+			</div>
+		</div>
+		{% if confirmed_needfuls_active %}
+		<div role="tabpanel" class="tab-pane active" id="confirmed_needfuls">
+		{% else %}
+		<div role="tabpanel" class="tab-pane" id="confirmed_needfuls">
+		{% endif %}
+		<br>
+			<h1> نیازمندان تایید شده</h1><br>
+			{% if confirmed_needfuls %}
+				<ul class="list-group col-sm-3" style="height: 400px; overflow: scroll; overflow-x: hidden">
+					{% for needful in confirmed_eedfuls %}
+					<li class="list-group-item"><a href="../admin_needful_info/{{needful.id}}/" >{{ needful.profile.user.username }} </a></li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<div class="col-sm-5 alert alert-warning">
+					<strong>نیازمند تایید شده‌ای در سانامه وجود ندارد.</strong>
+				</div>
+			{% endif %}
+		</div>
+		{% if other_needfuls_active %}
+		<div role="tabpanel" class="tab-pane active" id="other_needfuls">
+		{% else %}
+		<div role="tabpanel" class="tab-pane" id="other_needfuls">
+		{% endif %}
+			<div class="col-sm-5">
+				<h1>نیازمندان تایید نشده</h1>
+				<br>
+				{% if other_needfuls %}
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<tbody>
+								{% for needful in other_needfuls %}
+									<tr>
+										<td>{{ needful.profile.user.username }}</td>
+										<td>
+											<form action="{% url 'admin_needful_confirm' %}" method="post">
+												{% csrf_token %}
+												<div class="form-group">
+													<input type="hidden" name="needful" value={{ needful.id }}>
+													<button type="submit" class="btn btn-sm btn-default">تایید نیازمند</button>
+												</div>
+											</form>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					<br><br>
+					{% if other_needfuls_success %}
+						<div class="alert alert-success">
+							<strong>این نیازمند با موفقیت تایید شد.</strong>
+						</div>
+					{% endif %}
+				{% else %}
+					<div class="alert alert-warning">
+						<strong>نیازمند تایید نشده‌ای در سامانه وجود ندارد.</strong>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+		{% if helpers_active %}
+		<div role="tabpanel" class="tab-pane active" id="helpers">
+		{% else %}
+		<div role="tabpanel" class="tab-pane" id="helpers">
+		{% endif %}
+		<br>
+			<h1> مددکاران</h1><br>
+			{% if helpers %}
+				<ul class="list_group col-sm-7" style="height: 400px; overflow: scroll; overflow-x: hidden">
+					{% for helper, num in helpers_num %}
+					<li class="list_group_item">
+						<div class="col-sm-10>">{{helper.profile.user.username}}</div>
+						<div class="col-sm-2>">
+							{% if num < min_needful %}
+							<div class="alert alert-danger">{{ num }}</div>
+							{% else %}
+							<div class="alert alert-success">{{ num }}</div>
+							{% endif %}
+						</div>
+					</li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<div class="col-sm-5 alert alert-warning">
+					<strong>مددکاری در سانامه وجود ندارد.</strong>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
