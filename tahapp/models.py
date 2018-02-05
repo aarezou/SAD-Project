@@ -7,6 +7,7 @@ class Foundation(models.Model):
 	credit = models.IntegerField(default=0)
 	min_needfuls = models.IntegerField(default=0)
 
+
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	role = models.CharField(max_length=1, choices=ROLE_CHOICES)
@@ -26,6 +27,7 @@ class Needful(models.Model):
 	donor = models.ForeignKey(Donor, on_delete=models.SET_NULL, blank=True, null=True)
 	helper = models.ForeignKey(Helper, on_delete=models.SET_NULL, blank=True, null=True)
 	is_verified = models.BooleanField(default=False)
+	monthly_paid = models.BooleanField(default=False)
 
 
 class Admin(models.Model):

@@ -432,6 +432,20 @@ def pay_need_admin(request):
 	return redirect('index')
 
 
+def active_monthly_pay(request):
+	admin = get_admin(request)
+	if not admin:
+		return redirect('index')
+	if request.method == 'POST':
+		id = request.POST.get('id')
+		needfuls = Needful.objects.get(id=id, monthly_paid=False)
+		if needfuls.exists():
+			needful = needfuls[0]
+			needful.monthly_paid = True
+			needful.save()
+	return redirect('index')
+
+
 def get_needful(request):
 	if not request.user.is_authenticated:
 		return None
