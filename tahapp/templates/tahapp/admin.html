@@ -2,7 +2,7 @@
 
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
-		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active and not register_active%}
+		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active and not register_active and not confim_change_active %}
 			<li class="active"><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
 		{% else %}
 			<li><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
@@ -27,6 +27,11 @@
 			<li class="active"><a href="#register" role="tab" data-toggle="tab">ثبت‌نام کاربر جدید</a></li>
 		{% else %}
 			<li><a href="#register" role="tab" data-toggle="tab"> ثبت‌نام کاربر جدید</a></li>
+		{% endif %}
+		{% if confim_change_active %}
+			<li class="active"><a href="#confirm_change" role="tab" data-toggle="tab">تایید درخواست‌های تغییر مشخصات</a></li>
+		{% else %}
+			<li><a href="#confirm_change" role="tab" data-toggle="tab"> تایید درخواست‌های تغییر مشخصات</a></li>
 		{% endif %}
 		<li><a class="text-danger" href={{ '../logout' }}>خروج از حساب کاربری</a></li>
 	</ul><br>
@@ -279,5 +284,46 @@
 						</div>
 					{% endif %}
 				{% endif %}
+			</div>
+		</div>
+		{% if confirm_change_active %}
+		<div role="tabpanel" class="tab-pane active" id="confirm_change">
+		{% else %}
+		<div role="tabpanel" class="tab-pane" id="confirm_change">
+		{% endif %}
+			<h1>درخواست‌های تغییر مشخصات </h1><br>
+			<div class="col-sm-7">
+				<ul class="list-group">
+					{% if changes %}
+						{% for change in changes %}
+							<li class="list-group-item">
+								<div class="col-sm-2">{{ change.profile.user.username }}</div>
+								<div class="col-sm-2">{{ change.first_name }}</div>
+								<div class="col-sm-2">{{ change.last_name }}</div>
+								<div class="col-sm-4">{{ change.bio }}</div>
+								<div class="col-sm-2 form-group">
+									<form  action="{% url 'confirm_change_info' %}" method="post">
+										{% csrf_token %}
+										<input type="hidden" name="id" value={{ change.id }}>
+										<button type="submit" class="btn btn-xs btn-default">تایید</button>
+									</form>
+								</div>
+							<br>
+							</li>
+						{% endfor %}
+					{% else %}
+						<div class="alert alert-warning">
+							<strong>درخواست تغییر مشخصاتی وجود ندارد.</strong>
+						</div>
+					{% endif %}
+					<br>
+				</ul>
+                {% if confirm_change_active %}
+                    <div class="alert alert-success">
+                        <strong>تایید درخواست با موفقیت انجام شد.</strong>
+                    </div>
+                {% endif %}
+			</div>
+		</div>
 	</div>
 {% endblock %}

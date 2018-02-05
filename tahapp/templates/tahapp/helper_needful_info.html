@@ -23,6 +23,7 @@
 						<span class="list-group-item">
 							<div class="form-group">
 								<form action="{% url 'helper_edit_need' %}" method="post">
+									{% csrf_token %}
 									<input type="hidden" name="id" value={{ need.id }}>
 									<div class="col-sm-6"><input type="text" class="form-control" name="desc" value={{ need.desc }}></div>
 									<div class="col-sm-2"><input type="text" class="form-control" name="value" value={{ need.value }}></div>
