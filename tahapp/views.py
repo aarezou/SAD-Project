@@ -6,9 +6,7 @@ from django.core.mail import EmailMessage
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from django.contrib.auth.models import User
-from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment,\
-	TnxLetter, ChangeHelper, Achievement, Foundation, Donation, Admin, ChangeInfoRequest
+from tahapp.models import *
 
 
 def index(request):
@@ -28,7 +26,9 @@ def index(request):
 
 
 def logout(request):
-	auth_logout(request)
+	if request.user.is_authenticated:
+		Report.objects.create(context='logged out', user=request.user)
+		auth_logout(request)
 	return redirect('index')
 
 
@@ -43,6 +43,7 @@ def login(request):
 			user = authenticate(username=username, password=password)
 			if user:
 				auth_login(request, user)
+				Report.objects.create(context='logged in', user=user)
 				return redirect('index')
 		return render(request, 'tahapp/index.html', {'login_failed': True})
 	return redirect('index')
@@ -69,14 +70,12 @@ def register(request):
 
 	context = {'register_active': True}
 	if request.method == 'POST':
-		print('not even post')
 		role = request.POST.get('role')
 		password_repeat = request.POST.get('password_repeat')
 		form = RegisterForm(request.POST)
 		if not role:
 			context['no_role'] = True
 		elif password_repeat and form.is_valid():
-			print('everything is valid')
 			username = form.cleaned_data['username']
 			password = form.cleaned_data['password']
 			email = form.cleaned_data['email']
@@ -86,7 +85,6 @@ def register(request):
 			elif password != password_repeat:
 				context['unequal_passwords'] = True
 			else:
-				print('yess')
 				user = User.objects.create_user(username=username, email=email, password=password)
 				profile = Profile.objects.create(user=user, role=role[0])
 				if role[0] == 'H':
@@ -95,6 +93,7 @@ def register(request):
 					Donor.objects.create(profile=profile)
 				else:
 					Needful.objects.create(profile=profile)
+				Report.objects.create(context='registered', user=user)
 				context['register_success'] = True
 		else:
 			context['form_not_valid'] = True
@@ -102,7 +101,6 @@ def register(request):
 	if not profile1:
 		return render(request, 'tahapp/index.html', context)
 	elif profile1.role == 'A':
-		print('here srsly!!!!')
 		return admin_view2(request, context)
 	elif profile1.role == 'H':
 		return helper_view2(request, context)
@@ -117,13 +115,12 @@ def change_info(request):
 				first_name = request.POST.get('first_name')
 				last_name = request.POST.get('last_name')
 				bio = request.POST.get('bio')
-				print('jere')
 				if profile.user.first_name != first_name or profile.user.last_name != last_name or profile.bio != bio:
-					print('not here')
 					for change in ChangeInfoRequest.objects.filter(profile=profile):
 						change.delete()
 					ChangeInfoRequest.objects.create(profile=profile, first_name=first_name, last_name=last_name, bio=bio)
 					context = {'info_change_success': True}
+					Report.objects.create(context='create an info-change request', user=request.user)
 					if profile.role == 'N':
 						return needful_view2(request, context)
 					elif profile.role == 'H':
@@ -138,6 +135,9 @@ def toggle_email_enabled(request):
 	if profile and request.method == 'POST':
 		profile.email_enabled = not profile.email_enabled
 		profile.save()
+		s = 'enabled' if profile.email_enabled else 'disabled'
+		s += 'receiving emails'
+		Report.objects.create(context=s, user=request.user)
 	return redirect('index')
 
 
@@ -153,10 +153,13 @@ def submitLetter(request):
 			TnxLetter.objects.create(needful=needful, donor=needful.donor, helper=needful.helper, context=txt,
 				is_to_donor=(receiver == "Donor"))
 			context['submit_letter_success'] = True
+			Report.objects.create(context='sent a letter', user=request.user)
 			if needful.helper.profile.email_enabled:
-				email = EmailMessage('New email', 'You have recieved a new email from ' + needful.profile.user.username + '.',
-					to=[needful.helper.profile.user.email])
-				email.send()
+				try :
+					email = EmailMessage('New email', 'You have received a new letter from ' + needful.profile.user.username + '.', to=[needful.helper.profile.user.email])
+					email.send()
+				except Exception:
+					pass
 		else:
 			context['submit_letter_failed'] = True
 	return needful_view2(request, context)
@@ -172,6 +175,7 @@ def submitHelperChange(request):
 		if txt and txt != '':
 			ChangeHelper.objects.create(needful=needful, desc=txt)
 			context["helper_change_success"] = True
+			Report.objects.create(context='submitted a request to change helper', user=request.user)
 		else:
 			context["helper_change_failed"] = True
 	return needful_view2(request, context)
@@ -190,6 +194,7 @@ def submitNeedCare(request):
 			need.is_urgent = True
 			need.save()
 			context['need_care_success'] = True
+			Report.objects.create(context='made a need urgent', user=request.user)
 	return needful_view2(request, context)
 
 
@@ -220,6 +225,7 @@ def helper_needful_care(request):
 			if not needful.helper:
 				needful.helper = helper
 				needful.save()
+				Report.objects.create(context='started supporting a needful', user=request.user)
 				context['needful_care_success'] = True
 	return helper_view2(request, context)
 
@@ -256,9 +262,12 @@ def forward_letter(request):
 				letter.save()
 				needful = letter.needful
 				if needful.donor and needful.donor.profile.email_enabled:
-					email = EmailMessage('New email', 'You have recieved a new email from ' + needful.profile.user.username + '.',
-						to=[needful.profile.user.email])
-					email.send()
+					try:
+						email = EmailMessage('New email', 'You have received a new letter from ' + needful.profile.user.username + '.', to=[needful.profile.user.email])
+						email.send()
+					except Exception:
+						pass
+				Report.objects.create(context='forwarded a letter', user=request.user)
 				return helper_needful_info2(request, letter.needful.id, {'forward_letter_success': True})
 	return redirect('index')
 
@@ -276,6 +285,7 @@ def submit_achievement(request):
 					needful = needfuls[0]
 					Achievement.objects.create(needful=needful, desc=desc)
 					context['submit_achievement_success'] = True
+					Report.objects.create(context='recorded an achievement', user=request.user)
 				else:
 					context['submit_achievement_failed'] = True
 				return helper_needful_info2(request, needful_id, context)
@@ -295,6 +305,7 @@ def submit_need_helper(request):
 			is_urgent = True if temp else False
 			if value and desc and desc != '':
 				Need.objects.create(needful=needful, desc=desc, value=value, is_urgent=is_urgent)
+				Report.objects.create(context='created a need', user=request.user)
 				return helper_needful_info2(request, needful.id, {'submit_need_helper_success': True})
 			else:
 				return helper_needful_info2(request, needful.id, {'submit_need_helper_failed': True})
@@ -319,6 +330,7 @@ def helper_edit_need(request):
 				need.done = done
 				need.value = int(value)
 				need.save()
+				Report.objects.create(context='edited a need', user=request.user)
 				return helper_needful_info2(request, need.needful.id, {})
 	return redirect('index')
 
@@ -372,6 +384,7 @@ def donor_needful_care(request):
 				needful.donor = donor
 				needful.save()
 				context['needful_care_success'] = True
+				Report.objects.create(context='started supporting a needful', user=request.user)
 	return donor_view2(request, context)
 
 
@@ -390,6 +403,7 @@ def pay_need_donor(request):
 				need.done = True
 				need.save()
 				Payment.objects.create(need=need, donor=donor)
+				Report.objects.create(context='paid a need', user=request.user)
 				return donor_needful_info2(request, need.needful.id, {'pay_success': True})
 			else:
 				return donor_needful_info2(request, need.needful.id, {'pay_failed': True})
@@ -406,6 +420,7 @@ def increase_credit(request):
 		if value and value > 0:
 			donor.credit += value
 			donor.save()
+			Report.objects.create(context='increased credit', user=request.user)
 			context['credit_success'] = True
 		else:
 			context['credit_failed'] = True
@@ -428,6 +443,7 @@ def donate(request):
 				foundation.save()
 				donor.credit -= value
 				donor.save()
+				Report.objects.create(context='donated', user=request.user)
 				context['donation_success'] = True
 			else:
 				context['donation_not_enough'] = True

@@ -82,3 +82,9 @@ class ChangeInfoRequest(models.Model):
 	bio = models.CharField(max_length=100)
 	date = models.DateTimeField(auto_now_add=True)
 	done = models.BooleanField(default=False)
+
+
+class Report(models.Model):
+	context = models.CharField(max_length=200)
+	date = models.DateTimeField(auto_now_add=True)
+	user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
