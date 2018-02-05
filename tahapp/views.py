@@ -342,6 +342,7 @@ def donate(request):
 		if value and value > 0:
 			if donor.credit >= value:
 				foundation = Foundation.objects.get(id=1)
+				Donation.objects.create(value=value, donor=donor)
 				foundation.credit += value
 				foundation.save()
 				donor.credit -= value
