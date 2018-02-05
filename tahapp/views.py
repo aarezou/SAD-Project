@@ -146,7 +146,7 @@ def helper_view2(request, context):
 	if not helper:
 		return redirect('index')
 	context['yourNeedfuls'] = Needful.objects.filter(helper=helper)
-	context['otherNeedfuls'] = Needful.objects.filter(helper=None)
+	context['otherNeedfuls'] = Needful.objects.filter(helper=None, is_verified=True)
 	return render(request, 'tahapp/helper.html', context)
 
 
@@ -248,7 +248,7 @@ def donor_view2(request, context):
 	if not donor:
 		return redirect('index')
 	context['yourNeedfuls'] = Needful.objects.filter(donor=donor)
-	context['otherNeedfuls'] = Needful.objects.filter(donor=None).exclude(helper=None)
+	context['otherNeedfuls'] = Needful.objects.filter(donor=None, is_verified=True).exclude(helper=None)
 	context['payments'] = Payment.objects.filter(donor=donor)
 	context['credit'] = donor.credit
 	return render(request, 'tahapp/donor.html', context)
@@ -399,10 +399,8 @@ def admin_needful_confirm(request):
 	if request.method == 'POST':
 		id = request.POST.get('id')
 		if id:
-			print("here")
 			needfuls = Needful.objects.filter(id=id, is_verified=False)
 			if needfuls.exists():
-				print("not here")
 				needful = needfuls[0]
 				needful.is_verified = True
 				needful.save()
@@ -443,7 +441,22 @@ def active_monthly_pay(request):
 			needful = needfuls[0]
 			needful.monthly_paid = True
 			needful.save()
-			return admin_view2(request, {'confirmed_needfuls_active': True, 'monthly_pay_success': True})
+			return admin_view2(request, {'confirmed_needfuls_active': True, 'monthly_pay_true_success': True})
+	return redirect('index')
+
+
+def deactive_monthly_pay(request):
+	admin = get_admin(request)
+	if not admin:
+		return redirect('index')
+	if request.method == 'POST':
+		id = request.POST.get('id')
+		needfuls = Needful.objects.filter(id=id, monthly_paid=True)
+		if needfuls.exists():
+			needful = needfuls[0]
+			needful.monthly_paid = False
+			needful.save()
+			return admin_view2(request, {'confirmed_needfuls_active': True, 'monthly_pay_false_success': True})
 	return redirect('index')
 
 
