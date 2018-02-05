@@ -44,7 +44,7 @@
 			<div class="col-sm-7">
 				<h2> نام کاربری: {{ profile.user.username }}</h2>
 				<br>
-				<form action="" method="POST">
+				<form action="{% url 'toggle_email_enabled' %}" method="POST">
 					{% csrf_token %}
 					<div class="col-sm-offset-2 col-sm-10">
 						<button type="submit" class="btn btn-default">
