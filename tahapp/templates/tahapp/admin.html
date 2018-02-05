@@ -135,7 +135,6 @@
 							</li>
 						{% endfor %}
 					</ul>
-					</div>
 					<br><br>
 					{% if other_needfuls_success %}
 						<div class="alert alert-success">
@@ -160,8 +159,8 @@
 					<ul class="list-group" style="height: 400px; overflow: scroll; overflow-x: hidden">
 						{% for helper, num in helpers_num %}
 							<li class="list-group-item">
-								<div class="col-sm-5>"> {{helper.profile.user.username}} </div>
-								<div class="col-sm-1">
+								<div class="col-sm-10>"> {{helper.profile.user.username}} </div>
+								<div class="col-sm-2">
 									{{ num }}
 {#									{% if num < min_needful %}#}
 {#									{{ num }}#}
@@ -169,12 +168,12 @@
 {#									{{ num }}#}
 {#									{% endif %}#}
 								</div>
-								<br>
 							</li>
+							<br>
 						{% endfor %}
 					</ul>
 				{% else %}
-					<div class=" alert alert-warning">
+					<div class="alert alert-warning">
 						<strong>مددکاری در سانامه وجود ندارد.</strong>
 					</div>
 				{% endif %}
