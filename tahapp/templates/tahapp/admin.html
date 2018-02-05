@@ -3,7 +3,7 @@
 {% block navigation %}
 	<ul class="nav nav-tabs nav-pills nav-stacked">
 		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active %}
-			<li class="active"><a href="#info" role="tab" data-toggle="tab">مشخصات</a></li>
+			<li class="active"><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
 		{% else %}
 			<li><a href="#info" role="tab" data-toggle="tab">خانه</a></li>
 		{% endif %}
@@ -29,13 +29,13 @@
 
 {% block content %}
 	<div class="tab-content">
-		{% if not confirmed_needfuls_active and not other_needfuls_active %}
+		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active %}
 			<div role="tabpanel" class="tab-pane active" id="info">
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="info">
 		{% endif %}
 			<div class="well">
-				<h4>{{ credit }}</h4>
+				<h4> موجودی سامانه: {{ credit }}</h4>
 			</div>
 		</div>
 		<div role="tabpanel" class="tab-pane" id="money">
@@ -187,10 +187,11 @@
 				<form action="{% url 'min_helper_change' %}" method="post">
 					{% csrf_token %}
 					<div class="form-group">
-						<label for="value"> حداقل جدید </label><input class="form-control" type="number" id="value" name="value" >
+						<input class="form-control" type="number" id="value" name="min_helper_value" >
 						<button type="submit" class="btn btn-sm btn-default">تغییر حداقل</button>
 					</div>
 				</form>
+				<br>
 				{% if min_helper_change_success %}
 					<div class="alert alert-success">
 						<strong>تغییر حداقل با موفقیت انجام شد.</strong>
@@ -199,7 +200,7 @@
 				{% endif %}
 				{% if min_helper_change_failed%}
 					<div class="alert alert-danger">
-						<strong>خطا</strong>لطفا یک عدد مثبت وارد کنید.
+						<strong>خطا! </strong>لطفا یک عدد نامنفی وارد کنید.
 					</div>
 					<br>
 				{% endif %}
