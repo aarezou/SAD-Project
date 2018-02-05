@@ -5,7 +5,7 @@ from .choices import ROLE_CHOICES
 
 class Foundation(models.Model):
 	credit = models.IntegerField(default=0)
-
+	min_needfuls = models.IntegerField(default=0)
 
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -28,6 +28,10 @@ class Needful(models.Model):
 	is_verified = models.BooleanField(default=False)
 
 
+class Admin(models.Model):
+	profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
+
+
 class Need(models.Model):
 	needful = models.ForeignKey(Needful, on_delete=models.SET_NULL, blank=True, null=True)
 	value = models.IntegerField()
@@ -39,6 +43,12 @@ class Need(models.Model):
 class Payment(models.Model):
 	need = models.ForeignKey(Need, on_delete=models.CASCADE)
 	donor = models.ForeignKey(Donor, on_delete=models.SET_NULL, null=True)
+	date = models.DateTimeField(auto_now_add=True)
+
+
+class Donation(models.Model):
+	donor = models.ForeignKey(Donor, on_delete=models.SET_NULL, null=True)
+	value = models.IntegerField()
 	date = models.DateTimeField(auto_now_add=True)
 
 

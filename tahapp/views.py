@@ -6,7 +6,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
-from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment, TnxLetter, ChangeHelper, Achievement, Foundation
+from tahapp.models import Profile, Donor, Needful, Helper, Need, Payment,\
+	TnxLetter, ChangeHelper, Achievement, Foundation, Donation, Admin
 
 
 def index(request):
@@ -20,6 +21,8 @@ def index(request):
 				return redirect('helper_view')
 			elif profile.role == 'D':
 				return redirect('donor_view')
+			elif profile.role == 'A':
+				return redirect('admin_view')
 	return render(request, 'tahapp/index.html')
 
 
@@ -352,6 +355,51 @@ def donate(request):
 	return redirect('index')
 
 
+def admin_view2(request, context):
+	admin = get_admin(request)
+	if not admin:
+		return redirect('index')
+	context['confirm_needfuls'] = Needful.objects.filter(is_verified=False)
+	context['other_needfuls'] = Needful.objects.filter(is_verified=True)
+	context['donations'] = Donation.objects.all()
+	context['credit'] = Foundation.objects.get(id=1)
+	context['helpers_num'] = []
+	for helper in Helper.objects.all():
+		context['helpers_num'].append((helper, Needful.objects.filter(helper=helper).count()))
+	return render(request, 'tahapp/admin.html', context)
+
+
+def admin_view(request):
+	return admin_view2(request, {})
+
+
+def admin_needful_info2(request, context):
+	admin = get_admin(request)
+	if not admin:
+		return redirect('index')
+
+
+def admin_needful_info(request):
+	return admin_needful_info2(request, {})
+
+
+def admin_needful_confirm(request):
+	admin = get_admin(request)
+	if not admin:
+		return redirect('index')
+	if request.method == 'POST':
+		context = ['con']
+		id = request.POST.gt('id')
+		if id:
+			needfuls = Needful.objects.filter(id=id, is_verified=False)
+			if needfuls.exists():
+				needful = needfuls[0]
+				needful.is_verified = True
+				needful.save()
+				return admin_view2(request, {'other_needfuls_active': True, 'other_needfuls_success': True})
+	return redirect('index')
+
+
 def get_needful(request):
 	if not request.user.is_authenticated:
 		return None
@@ -379,5 +427,15 @@ def get_donor(request):
 	try:
 		profile = Profile.objects.filter(user=request.user)[0]
 		return Donor.objects.filter(profile=profile)[0]
+	except Exception:
+		return None
+
+
+def get_admin(request):
+	if not request.user.is_authenticated:
+		return None
+	try:
+		profile = Profile.objects.filter(user=request.user)[0]
+		return Admin.objects.filter(profile=profile)[0]
 	except Exception:
 		return None

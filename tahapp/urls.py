@@ -24,4 +24,6 @@ urlpatterns = [
 	path('donor_needful_info/<int:needful_id>/', views.donor_needful_info, name='donor_needful_info'),
 	path('increase_credit/', views.increase_credit, name='increase_credit'),
 	path('donate/', views.donate, name='donate'),
+	path('admin_view/', views.admin_view, name='admin_view'),
+	path('admin_needful_confirm/', views.admin_needful_confirm, name='admin_needful_confirm'),
 ]
