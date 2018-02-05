@@ -39,7 +39,7 @@
 
 {% block content %}
 	<div class="tab-content">
-		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active %}
+		{% if not confirmed_needfuls_active and not other_needfuls_active and not helpers_active and not register_active and not confirm_change_active%}
 			<div role="tabpanel" class="tab-pane active" id="info">
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="info">
