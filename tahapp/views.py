@@ -108,6 +108,13 @@ def change_info(request):
 					for change in ChangeInfoRequest.objects.filter(profile=profile):
 						change.delete()
 					ChangeInfoRequest.objects.create(profile=profile, first_name=first_name, last_name=last_name, bio=bio)
+					context = {'change_info_success': True}
+					if profile.role == 'N':
+						return needful_view2(request, context)
+					elif profile.role == 'H':
+						helper_view2(request, context)
+					else:
+						donor_view2(request, context)
 	return redirect('index')
 
 
