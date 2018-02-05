@@ -38,50 +38,53 @@
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="yourNeedfuls">
 		{% endif %}
-		<br>
 			<h1> نیازمندان تحت حمایت شما</h1><br>
-			{% if yourNeedfuls %}
-				<ul class="nav nav-tabs nav-pills nav-stacked col-sm-3" style="height: 400px; overflow: scroll; overflow-x: hidden">
-					{% for needful in yourNeedfuls %}
-					<li><a href="../helper_needful_info/{{needful.id}}/" >{{ needful.profile.user.username }} </a></li>
-					{% endfor %}
-				</ul>
-			{% else %}
-				<div class="col-sm-5 alert alert-warning">
-					<strong>شما نیازمندی تحت حمایت خود ندارید.</strong>
-				</div>
-			{% endif %}
+			<div class="col-sm-7">
+				{% if yourNeedfuls %}
+					<ul class="list-group" style="height: 400px; overflow: scroll; overflow-x: hidden">
+						{% for needful in yourNeedfuls %}
+							<a href="../helper_needful_info/{{needful.id}}/" >
+								<li class="list-group-item">
+									<div class="col-sm-3">{{ needful.profile.user.username }} </div>
+									<div class="col-sm-9">{{ needful.profile.bio }}</div>
+									<br>
+								</li>
+							</a>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<div class="alert alert-warning">
+						<strong>شما نیازمندی تحت حمایت خود ندارید.</strong>
+					</div>
+				{% endif %}
+			</div>
 		</div>
 		{% if other_needfuls_active %}
 		<div role="tabpanel" class="tab-pane active" id="otherNeedfuls">
 		{% else %}
 		<div role="tabpanel" class="tab-pane" id="otherNeedfuls">
 		{% endif %}
-			<div class="col-sm-5">
-				<h1>نیازمندان بدون حامی</h1>
-				<br>
+			<h1>نیازمندان بدون حامی</h1><br>
+			<div class="col-sm-7">
 				{% if otherNeedfuls %}
-					<div class="table-responsive">
-						<table class="table table-hover">
-							<tbody>
-								{% for needful in otherNeedfuls %}
-									<tr>
-										<td>{{ needful.profile.user.username }}</td>
-										<td>
-											<form action="{% url 'helper_needful_care' %}" method="post">
-												{% csrf_token %}
-												<div class="form-group">
-													<input type="hidden" name="needful" value={{ needful.id }}>
-													<button type="submit" class="btn btn-sm btn-default">تحت حمایت قراردادن</button>
-												</div>
-											</form>
-										</td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					</div>
-					<br><br>
+					<ul class="list_group" style="height: 400px; overflow: scroll; overflow-x: hidden">
+						{% for needful in otherNeedfuls %}
+							<li class="list-group-item">
+								<div class="col-sm-2"> {{ needful.profile.user.username }} </div>
+								<div class="col-sm-8"> {{ needful.profile.bio}} </div>
+								<div class="col-sm-2">
+									<form action="{% url 'helper_needful_care' %}" method="post">
+										{% csrf_token %}
+										<div class="form-group">
+											<input type="hidden" name="needful" value={{ needful.id }}>
+											<button type="submit" class="btn btn-xs btn-default">تحت حمایت قراردادن</button>
+										</div>
+									</form>
+								</div>
+								<br>
+							</li>
+						{% endfor %}
+					</ul>
 					{% if other_needfuls_success %}
 						<div class="alert alert-success">
 							<strong>این نیازمند با موفقیت تحت حمایت شما قرار داده شد.</strong>

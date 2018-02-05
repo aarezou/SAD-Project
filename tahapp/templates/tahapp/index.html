@@ -98,6 +98,7 @@
 				{% else %}
 					<div role="tabpanel" class="tab-pane" id="login">
 				{% endif %}
+				<div class="col-sm-7">
 			<form id="login-form" class="form-horizontal" action="{% url 'login' %}" method="POST">
 				{% csrf_token %}
 				<div class="form-group">
@@ -130,14 +131,16 @@
 					<strong>خطا!</strong> نام کاربری یا کلمه عبور اشتباه است.
 				</div>
 			{% endif %}
+				</div>
 			</div>
 				{% if register_active %}
 					<div role="tabpanel" class="tab-pane active" id="register">
 				{% else %}
 					<div role="tabpanel" class="tab-pane" id="register">
 				{% endif %}
+			<div class="col-sm-7">
 				{%  if success %}
-					<div class="alert alert-success col-sm-5">
+					<div class="alert alert-success">
 						<strong>ثبت نام با موفقیت انجام شد.</strong>
 					</div>
 				{% else %}
@@ -178,7 +181,7 @@
 							</div>
 						</div>
 					</form>
-					{% if no_role or username_taken or unequal_passwords %}
+					{% if no_role or username_taken or unequal_passwords or form_not_valid %}
 						<div class="alert alert-danger">
 							<strong>خطا!</strong>
 							{% if no_role %}
@@ -193,9 +196,14 @@
 								کلمه‌ی عبور با تکرار آن همخوانی ندارد
 								<br>
 							{% endif %}
+							{% if form_not_valid %}
+								لطفا همه‌ی قسمت‌ها را پر کنید.
+								<br>
+							{% endif %}
 						</div>
 					{% endif %}
 				{% endif %}
+			</div>
 			</div>
 			</div>
 			{% endblock %}
